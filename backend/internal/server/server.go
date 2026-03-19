@@ -14,10 +14,13 @@ import (
 	"github.com/t-line/backend/internal/config"
 	"github.com/t-line/backend/internal/integration/sms"
 	"github.com/t-line/backend/internal/integration/wechat"
+	activitymod "github.com/t-line/backend/internal/modules/activity"
 	authmod "github.com/t-line/backend/internal/modules/auth"
 	bookingmod "github.com/t-line/backend/internal/modules/booking"
+	notifymod "github.com/t-line/backend/internal/modules/notify"
 	ordermod "github.com/t-line/backend/internal/modules/order"
 	paymentmod "github.com/t-line/backend/internal/modules/payment"
+	productmod "github.com/t-line/backend/internal/modules/product"
 	venuemod "github.com/t-line/backend/internal/modules/venue"
 	"github.com/t-line/backend/internal/pkg/jwt"
 	"github.com/t-line/backend/internal/pkg/logger"
@@ -35,12 +38,16 @@ type Server struct {
 	smsSender  *sms.Sender
 
 	// module handlers
-	authHandler         *authmod.Handler
-	venueHandler        *venuemod.Handler
-	orderHandler        *ordermod.Handler
-	orderAdminHandler   *ordermod.AdminHandler
-	paymentHandler      *paymentmod.Handler
-	bookingHandler      *bookingmod.Handler
+	authHandler            *authmod.Handler
+	venueHandler           *venuemod.Handler
+	orderHandler           *ordermod.Handler
+	orderAdminHandler      *ordermod.AdminHandler
+	paymentHandler         *paymentmod.Handler
+	bookingHandler         *bookingmod.Handler
+	productHandler         *productmod.Handler
+	activityHandler        *activitymod.Handler
+	activityAdminHandler   *activitymod.AdminHandler
+	notifyHandler          *notifymod.Handler
 }
 
 func New(cfg *config.Config, db *gorm.DB, rdb *redis.Client) *Server {

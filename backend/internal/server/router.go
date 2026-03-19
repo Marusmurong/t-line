@@ -5,10 +5,13 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	activitymod "github.com/t-line/backend/internal/modules/activity"
 	authmod "github.com/t-line/backend/internal/modules/auth"
 	bookingmod "github.com/t-line/backend/internal/modules/booking"
+	notifymod "github.com/t-line/backend/internal/modules/notify"
 	ordermod "github.com/t-line/backend/internal/modules/order"
 	paymentmod "github.com/t-line/backend/internal/modules/payment"
+	productmod "github.com/t-line/backend/internal/modules/product"
 	venuemod "github.com/t-line/backend/internal/modules/venue"
 	"github.com/t-line/backend/internal/middleware"
 	"github.com/t-line/backend/internal/pkg/response"
@@ -50,6 +53,10 @@ func (s *Server) setupRoutes() {
 	s.orderAdminHandler.RegisterRoutes(admin)
 	s.paymentHandler.RegisterRoutes(public, authed)
 	s.bookingHandler.RegisterRoutes(authed)
+	s.productHandler.RegisterRoutes(public, admin)
+	s.activityHandler.RegisterRoutes(public, authed)
+	s.activityAdminHandler.RegisterRoutes(admin)
+	s.notifyHandler.RegisterRoutes(authed)
 
 	// handle 404
 	s.engine.NoRoute(func(c *gin.Context) {
@@ -86,6 +93,22 @@ func (s *Server) initModules() {
 	bookingSvc := bookingmod.NewService(bookingRepo, s.rdb)
 	bookingSvc.SetVenuePricer(venueSvc)
 	s.bookingHandler = bookingmod.NewHandler(bookingSvc)
+
+	// Product module
+	productRepo := productmod.NewRepository(s.db)
+	productSvc := productmod.NewService(productRepo)
+	s.productHandler = productmod.NewHandler(productSvc)
+
+	// Activity module
+	activityRepo := activitymod.NewRepository(s.db)
+	activitySvc := activitymod.NewService(activityRepo)
+	s.activityHandler = activitymod.NewHandler(activitySvc)
+	s.activityAdminHandler = activitymod.NewAdminHandler(activitySvc)
+
+	// Notify module
+	notifyRepo := notifymod.NewRepository(s.db)
+	notifySvc := notifymod.NewService(notifyRepo)
+	s.notifyHandler = notifymod.NewHandler(notifySvc)
 
 	// Wire cross-module dependencies
 	venueSvc.SetBookingChecker(bookingSvc)
