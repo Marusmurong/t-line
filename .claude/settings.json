@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Agent"
+    ],
+    "deny": []
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "command": "bash .claude/hooks/pretooluse-file-guard.sh"
+      }
+    ]
+  },
+  "env": {},
+  "model": "sonnet",
+  "alwaysThinkingEnabled": true
+}

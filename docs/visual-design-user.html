@@ -1,0 +1,2528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>T-LINE SPORTS CLUB - 微信小程序视觉设计稿</title>
+<style>
+  :root {
+    --primary: #2255CC;
+    --primary-light: #3366DD;
+    --primary-dark: #1A44AA;
+    --accent: #C8E632;
+    --accent-dark: #A8C420;
+    --white: #FFFFFF;
+    --bg: #F0F2F5;
+    --bg-page: #F5F6FA;
+    --card: #FFFFFF;
+    --text-primary: #1A1A2E;
+    --text-secondary: #666680;
+    --text-hint: #9999AA;
+    --border: #E8E8F0;
+    --success: #34C759;
+    --danger: #FF3B30;
+    --warning: #FF9500;
+    --font: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font);
+    background: #E0E2E8;
+    min-height: 100vh;
+    padding: 40px;
+  }
+
+  .design-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .design-header h1 {
+    font-size: 28px;
+    color: var(--primary);
+    letter-spacing: 4px;
+    font-weight: 700;
+  }
+  .design-header p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+  }
+
+  .pages-container {
+    display: flex;
+    gap: 40px;
+    overflow-x: auto;
+    padding-bottom: 40px;
+    scroll-behavior: smooth;
+  }
+
+  .page-wrapper {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .page-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+  }
+
+  /* Phone Frame */
+  .phone-frame {
+    width: 375px;
+    height: 812px;
+    background: var(--bg-page);
+    border-radius: 44px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(255,255,255,0.1);
+  }
+
+  /* Status Bar */
+  .status-bar {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    background: var(--white);
+    position: relative;
+    z-index: 10;
+  }
+  .status-bar.primary {
+    background: var(--primary);
+    color: var(--white);
+  }
+  .status-bar .time {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .status-bar .icons {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  /* Tab Bar */
+  .tab-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 83px;
+    background: var(--white);
+    display: flex;
+    align-items: flex-start;
+    padding-top: 8px;
+    border-top: 0.5px solid var(--border);
+    z-index: 10;
+  }
+  .tab-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .tab-item svg { width: 24px; height: 24px; }
+  .tab-item span {
+    font-size: 10px;
+    color: var(--text-hint);
+  }
+  .tab-item.active span {
+    color: var(--primary);
+    font-weight: 600;
+  }
+  .tab-item .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    background: #000;
+    border-radius: 3px;
+  }
+
+  /* Page Content Area */
+  .page-content {
+    height: calc(812px - 44px - 83px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+  }
+  .page-content.no-tab {
+    height: calc(812px - 44px);
+  }
+  .page-content::-webkit-scrollbar { display: none; }
+
+  /* ============ COMMON COMPONENTS ============ */
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    padding: 16px 16px 8px;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    margin: 0 12px 12px;
+    overflow: hidden;
+  }
+
+  .badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    display: inline-block;
+  }
+  .badge-blue { background: rgba(34,85,204,0.1); color: var(--primary); }
+  .badge-green { background: rgba(52,199,89,0.1); color: var(--success); }
+  .badge-orange { background: rgba(255,149,0,0.1); color: var(--warning); }
+  .badge-red { background: rgba(255,59,48,0.1); color: var(--danger); }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: var(--white);
+    padding: 10px 20px;
+  }
+  .btn-accent {
+    background: var(--accent);
+    color: var(--text-primary);
+    padding: 8px 16px;
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  .btn-full {
+    width: calc(100% - 32px);
+    margin: 0 16px;
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 12px;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--primary);
+  }
+
+  /* Inline Tabs */
+  .inline-tabs {
+    display: flex;
+    gap: 0;
+    background: var(--white);
+    border-bottom: 0.5px solid var(--border);
+    padding: 0 12px;
+  }
+  .inline-tab {
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    position: relative;
+    white-space: nowrap;
+  }
+  .inline-tab.active {
+    color: var(--primary);
+    font-weight: 600;
+  }
+  .inline-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 2px;
+  }
+
+  /* Nav Bar */
+  .nav-bar {
+    height: 44px;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    border-bottom: 0.5px solid var(--border);
+    position: relative;
+  }
+  .nav-bar .title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .nav-bar .back {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* List Item */
+  .list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: var(--white);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .list-item:last-child { border-bottom: none; }
+  .list-item .left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .list-item .icon-box {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ============ PAGE 1: HOME ============ */
+
+  .home-header {
+    background: var(--white);
+    padding: 8px 16px 12px;
+  }
+  .home-logo-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .home-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .home-logo .logo-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--primary);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .home-logo .logo-text {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: 1px;
+  }
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-page);
+    border-radius: 20px;
+    padding: 8px 14px;
+  }
+  .search-bar span {
+    font-size: 13px;
+    color: var(--text-hint);
+  }
+
+  .banner {
+    margin: 0 12px 12px;
+    height: 160px;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, #4488EE 100%);
+  }
+  .banner-content {
+    padding: 24px 20px;
+    color: var(--white);
+    position: relative;
+    z-index: 1;
+  }
+  .banner-content h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .banner-content p {
+    font-size: 13px;
+    opacity: 0.85;
+    margin-bottom: 12px;
+  }
+  .banner-dots {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+  }
+  .banner-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.4);
+  }
+  .banner-dot.active {
+    width: 18px;
+    background: var(--white);
+  }
+  .banner-pattern {
+    position: absolute;
+    right: -20px;
+    top: -20px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+  .banner-pattern2 {
+    position: absolute;
+    right: 30px;
+    bottom: -40px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(200,230,50,0.15);
+  }
+
+  .quick-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin: 0 12px 12px;
+    background: var(--white);
+    border-radius: 12px;
+    padding: 16px 0;
+  }
+  .quick-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .quick-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .quick-item span {
+    font-size: 12px;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .court-overview {
+    margin: 0 12px 12px;
+    background: var(--white);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .court-overview .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .court-overview .header h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .court-overview .header span {
+    font-size: 12px;
+    color: var(--primary);
+  }
+  .court-stats {
+    display: flex;
+    gap: 12px;
+  }
+  .court-stat {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    background: var(--bg-page);
+    border-radius: 10px;
+  }
+  .court-stat .num {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--primary);
+  }
+  .court-stat .num .total {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-hint);
+  }
+  .court-stat .label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+  }
+
+  .hot-activities {
+    margin: 0 12px 12px;
+  }
+  .hot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .hot-header h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .hot-header span {
+    font-size: 12px;
+    color: var(--text-hint);
+  }
+  .hot-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .hot-scroll::-webkit-scrollbar { display: none; }
+  .hot-card {
+    flex-shrink: 0;
+    width: 200px;
+    background: var(--white);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .hot-card-img {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 600;
+    position: relative;
+  }
+  .hot-card-img .tag {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(0,0,0,0.4);
+    color: var(--white);
+  }
+  .hot-card-info {
+    padding: 10px;
+  }
+  .hot-card-info h5 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .hot-card-info p {
+    font-size: 11px;
+    color: var(--text-hint);
+  }
+  .hot-card-info .price {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--danger);
+    margin-top: 4px;
+  }
+
+  /* ============ PAGE 2: BOOKING ============ */
+
+  .date-picker {
+    display: flex;
+    gap: 4px;
+    padding: 12px;
+    background: var(--white);
+    overflow-x: auto;
+  }
+  .date-picker::-webkit-scrollbar { display: none; }
+  .date-item {
+    flex-shrink: 0;
+    width: 56px;
+    text-align: center;
+    padding: 8px 0;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .date-item .weekday {
+    font-size: 11px;
+    color: var(--text-hint);
+    margin-bottom: 4px;
+  }
+  .date-item .day {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .date-item .month {
+    font-size: 10px;
+    color: var(--text-hint);
+    margin-top: 2px;
+  }
+  .date-item.active {
+    background: var(--primary);
+  }
+  .date-item.active .weekday,
+  .date-item.active .day,
+  .date-item.active .month {
+    color: var(--white);
+  }
+
+  .court-filter {
+    display: flex;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--white);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .filter-chip {
+    padding: 5px 14px;
+    border-radius: 16px;
+    font-size: 12px;
+    background: var(--bg-page);
+    color: var(--text-secondary);
+  }
+  .filter-chip.active {
+    background: var(--primary);
+    color: var(--white);
+  }
+
+  .court-row {
+    background: var(--white);
+    margin: 8px 12px;
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .court-row-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .court-row-header .name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .time-slots {
+    display: flex;
+    gap: 3px;
+    flex-wrap: wrap;
+  }
+  .time-slot {
+    width: 36px;
+    height: 24px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: var(--white);
+    font-weight: 500;
+  }
+  .slot-available { background: var(--success); }
+  .slot-booked { background: #FF3B30; opacity: 0.7; }
+  .slot-maintenance { background: var(--warning); }
+  .slot-selected { background: var(--primary); box-shadow: 0 0 0 2px var(--accent); }
+
+  .time-legend {
+    display: flex;
+    gap: 12px;
+    padding: 8px 12px;
+    justify-content: center;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: var(--text-hint);
+  }
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+  }
+
+  /* ============ PAGE 3: BOOKING CONFIRM ============ */
+
+  .confirm-card {
+    margin: 12px;
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .confirm-card-img {
+    height: 140px;
+    background: linear-gradient(135deg, #4488EE, var(--primary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .confirm-card-img .court-label {
+    color: var(--white);
+    text-align: center;
+  }
+  .confirm-card-img .court-label h3 {
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .confirm-card-img .court-label p {
+    font-size: 13px;
+    opacity: 0.8;
+    margin-top: 4px;
+  }
+  .confirm-details {
+    padding: 16px;
+  }
+  .confirm-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .confirm-row:last-child { border-bottom: none; }
+  .confirm-row .label {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .confirm-row .value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .confirm-row .value.price {
+    color: var(--danger);
+    font-size: 18px;
+  }
+  .confirm-row .value.discount {
+    color: var(--success);
+  }
+
+  .pay-methods {
+    margin: 0 12px 12px;
+    background: var(--white);
+    border-radius: 12px;
+    padding: 4px 0;
+  }
+  .pay-method {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+  }
+  .pay-method .left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .pay-method .name {
+    font-size: 14px;
+    color: var(--text-primary);
+  }
+  .pay-method .desc {
+    font-size: 11px;
+    color: var(--text-hint);
+  }
+  .radio-outer {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .radio-outer.checked {
+    border-color: var(--primary);
+  }
+  .radio-inner {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--primary);
+  }
+
+  .notice-section {
+    margin: 0 12px 12px;
+    background: var(--white);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .notice-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .bottom-action {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 16px;
+    padding-bottom: 34px;
+    background: var(--white);
+    border-top: 0.5px solid var(--border);
+    z-index: 10;
+  }
+  .pay-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    background: var(--primary);
+    color: var(--white);
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    text-align: center;
+  }
+
+  /* ============ PAGE 4: ACTIVITIES ============ */
+
+  .activity-card {
+    margin: 8px 12px;
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .activity-img {
+    height: 120px;
+    display: flex;
+    align-items: flex-end;
+    padding: 10px;
+    position: relative;
+  }
+  .activity-img .type-tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--white);
+  }
+  .activity-body {
+    padding: 12px;
+  }
+  .activity-body h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+  .activity-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+  .activity-meta span {
+    font-size: 12px;
+    color: var(--text-hint);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .activity-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .activity-footer .slots {
+    flex: 1;
+  }
+  .activity-footer .slots .text {
+    font-size: 11px;
+    color: var(--text-hint);
+    margin-bottom: 4px;
+  }
+  .activity-footer .price-tag {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--danger);
+  }
+  .activity-footer .price-tag .unit {
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  /* ============ PAGE 5: SHOP ============ */
+
+  .coach-card {
+    margin: 8px 12px;
+    background: var(--white);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .coach-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--white);
+    flex-shrink: 0;
+  }
+  .coach-info {
+    flex: 1;
+  }
+  .coach-info h5 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+  .coach-info .desc {
+    font-size: 12px;
+    color: var(--text-hint);
+    margin-bottom: 6px;
+  }
+  .coach-info .tags {
+    display: flex;
+    gap: 4px;
+  }
+
+  .package-card {
+    margin: 8px 12px;
+    background: var(--white);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid var(--primary);
+  }
+  .package-info h5 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .package-info p {
+    font-size: 12px;
+    color: var(--text-hint);
+  }
+  .package-price {
+    text-align: right;
+  }
+  .package-price .amount {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--danger);
+  }
+  .package-price .amount .yuan {
+    font-size: 13px;
+  }
+  .package-price .original {
+    font-size: 11px;
+    color: var(--text-hint);
+    text-decoration: line-through;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+  .product-card {
+    background: var(--white);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .product-img {
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    position: relative;
+  }
+  .product-img .stock {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(52,199,89,0.12);
+    color: var(--success);
+  }
+  .product-info {
+    padding: 10px;
+  }
+  .product-info h5 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .product-info .price {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--danger);
+  }
+  .product-info .price .yuan {
+    font-size: 11px;
+  }
+
+  /* ============ PAGE 6: PROFILE ============ */
+
+  .profile-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    padding: 24px 20px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .profile-header::after {
+    content: '';
+    position: absolute;
+    right: -30px;
+    top: -30px;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+  .profile-user {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    z-index: 1;
+  }
+  .profile-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    border: 2px solid rgba(255,255,255,0.4);
+  }
+  .profile-info h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+  .profile-tags {
+    display: flex;
+    gap: 6px;
+  }
+  .profile-tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(200,230,50,0.2);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .wallet-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: -16px 12px 12px;
+    background: var(--white);
+    border-radius: 12px;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .wallet-item {
+    text-align: center;
+    padding: 16px 0;
+  }
+  .wallet-item .num {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+  .wallet-item .label {
+    font-size: 11px;
+    color: var(--text-hint);
+    margin-top: 2px;
+  }
+
+  .order-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 0 12px 12px;
+    background: var(--white);
+    border-radius: 12px;
+    padding: 16px 0;
+  }
+  .order-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+  }
+  .order-badge {
+    position: absolute;
+    top: -6px;
+    right: 14px;
+    width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    background: var(--danger);
+    color: var(--white);
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+  }
+  .order-item span {
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  .func-list {
+    margin: 0 12px 12px;
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  /* ============ PAGE 7: MY BOOKINGS ============ */
+
+  .booking-card {
+    margin: 8px 12px;
+    background: var(--white);
+    border-radius: 12px;
+    padding: 14px;
+    border-left: 4px solid var(--success);
+  }
+  .booking-card.cancelled {
+    border-left-color: var(--text-hint);
+    opacity: 0.7;
+  }
+  .booking-card .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .booking-card .top h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .booking-card .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+  .booking-card .meta span {
+    font-size: 12px;
+    color: var(--text-hint);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .booking-card .countdown {
+    font-size: 13px;
+    color: var(--primary);
+    font-weight: 600;
+    background: rgba(34,85,204,0.06);
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  .booking-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    justify-content: flex-end;
+  }
+
+  /* ============ PAGE 8: WALLET ============ */
+
+  .wallet-hero {
+    margin: 12px;
+    padding: 28px 24px;
+    background: linear-gradient(135deg, var(--primary) 0%, #4488EE 100%);
+    border-radius: 16px;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+  .wallet-hero::after {
+    content: '';
+    position: absolute;
+    right: -20px;
+    bottom: -20px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(200,230,50,0.15);
+  }
+  .wallet-hero .label {
+    font-size: 13px;
+    opacity: 0.8;
+    margin-bottom: 8px;
+  }
+  .wallet-hero .amount {
+    font-size: 36px;
+    font-weight: 800;
+    position: relative;
+    z-index: 1;
+  }
+  .wallet-hero .amount .yuan {
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .recharge-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 0 12px;
+    margin-bottom: 12px;
+  }
+  .recharge-item {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    border: 2px solid transparent;
+    position: relative;
+  }
+  .recharge-item.popular {
+    border-color: var(--primary);
+  }
+  .recharge-item.popular::after {
+    content: '推荐';
+    position: absolute;
+    top: -1px;
+    right: 12px;
+    background: var(--primary);
+    color: var(--white);
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 0 0 6px 6px;
+  }
+  .recharge-item .main {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .recharge-item .main .yuan {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .recharge-item .bonus {
+    font-size: 12px;
+    color: var(--danger);
+    font-weight: 600;
+  }
+
+  .tx-list {
+    margin: 0 12px;
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .tx-header {
+    padding: 14px 16px 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .tx-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .tx-item:last-child { border-bottom: none; }
+  .tx-item .left .desc {
+    font-size: 14px;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+  .tx-item .left .time {
+    font-size: 11px;
+    color: var(--text-hint);
+  }
+  .tx-item .amount {
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .tx-item .amount.minus { color: var(--text-primary); }
+  .tx-item .amount.plus { color: var(--success); }
+
+  /* Home indicator */
+  .home-ind {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 3px;
+    z-index: 20;
+  }
+
+  /* SVG Icon helpers */
+  .icon-sm { width: 16px; height: 16px; }
+  .icon-md { width: 20px; height: 20px; }
+  .icon-lg { width: 24px; height: 24px; }
+</style>
+</head>
+<body>
+
+<div class="design-header">
+  <h1>T-LINE SPORTS CLUB</h1>
+  <p>微信小程序高保真视觉设计稿 v1.0 | 设计宽度 375px | 共 8 个核心页面</p>
+</div>
+
+<div class="pages-container">
+
+<!-- ==================== PAGE 1: HOME ==================== -->
+<div class="page-wrapper">
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="icons">
+        <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="0.5" fill="#1A1A2E"/><rect x="4.5" y="4" width="3" height="8" rx="0.5" fill="#1A1A2E"/><rect x="9" y="2" width="3" height="10" rx="0.5" fill="#1A1A2E"/><rect x="13" y="0" width="3" height="12" rx="0.5" fill="#1A1A2E"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 2C5 2 2.5 3.5 1 5.5L2.5 7C3.7 5.3 5.7 4 8 4s4.3 1.3 5.5 3L15 5.5C13.5 3.5 11 2 8 2z" fill="#1A1A2E"/><circle cx="8" cy="10" r="2" fill="#1A1A2E"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="22" height="10" rx="2" stroke="#1A1A2E" stroke-width="1" fill="none"/><rect x="23" y="4" width="2" height="4" rx="0.5" fill="#1A1A2E"/><rect x="1.5" y="2.5" width="16" height="7" rx="1" fill="#34C759"/></svg>
+      </div>
+    </div>
+    <div class="page-content">
+      <!-- Home Header -->
+      <div class="home-header">
+        <div class="home-logo-row">
+          <div class="home-logo">
+            <div class="logo-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20"><text x="2" y="16" font-size="15" font-weight="800" fill="#fff" font-family="system-ui">T</text></svg>
+            </div>
+            <span class="logo-text">T-LINE</span>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="3" fill="none" stroke="#666" stroke-width="1.5"/><path d="M17 17l-3.5-3.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="search-bar">
+          <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="6" cy="6" r="4" fill="none" stroke="#999" stroke-width="1.2"/><path d="M12 12L9 9" stroke="#999" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <span>搜索场地、活动、课程...</span>
+        </div>
+      </div>
+
+      <!-- Banner -->
+      <div class="banner">
+        <div class="banner-pattern"></div>
+        <div class="banner-pattern2"></div>
+        <div class="banner-content">
+          <h3>春季畅打活动</h3>
+          <p>每周三/六 19:00-22:00 不限时畅打</p>
+          <span class="btn btn-accent" style="font-size:12px;padding:6px 14px;border-radius:6px;">立即报名</span>
+        </div>
+        <div class="banner-dots">
+          <div class="banner-dot active"></div>
+          <div class="banner-dot"></div>
+          <div class="banner-dot"></div>
+        </div>
+      </div>
+
+      <!-- Quick Grid -->
+      <div class="quick-grid">
+        <div class="quick-item">
+          <div class="quick-icon" style="background:rgba(34,85,204,0.1);">
+            <svg width="24" height="24" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="#2255CC" stroke-width="1.8"/><path d="M3 10h18M8 5v14M16 5v14" stroke="#2255CC" stroke-width="1.2"/></svg>
+          </div>
+          <span>订场</span>
+        </div>
+        <div class="quick-item">
+          <div class="quick-icon" style="background:rgba(200,230,50,0.15);">
+            <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="#7D9A00" stroke-width="1.8"/><path d="M12 8v5l3 3" stroke="#7D9A00" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </div>
+          <span>活动</span>
+        </div>
+        <div class="quick-item">
+          <div class="quick-icon" style="background:rgba(255,149,0,0.1);">
+            <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="#FF9500" stroke-width="1.8"/><path d="M5 20c0-4 3-7 7-7s7 3 7 7" fill="none" stroke="#FF9500" stroke-width="1.8"/></svg>
+          </div>
+          <span>课程</span>
+        </div>
+        <div class="quick-item">
+          <div class="quick-icon" style="background:rgba(255,59,48,0.1);">
+            <svg width="24" height="24" viewBox="0 0 24 24"><path d="M6 6h12l-1 12H7L6 6z" fill="none" stroke="#FF3B30" stroke-width="1.8"/><path d="M9 6V4h6v2" fill="none" stroke="#FF3B30" stroke-width="1.5"/></svg>
+          </div>
+          <span>商城</span>
+        </div>
+      </div>
+
+      <!-- Court Overview -->
+      <div class="court-overview">
+        <div class="header">
+          <h4>今日场地概况</h4>
+          <span>查看全部 ></span>
+        </div>
+        <div class="court-stats">
+          <div class="court-stat">
+            <div class="num">5<span class="total"> / 8</span></div>
+            <div class="label">可用场地</div>
+          </div>
+          <div class="court-stat">
+            <div class="num" style="color:var(--success);">3</div>
+            <div class="label">室内空闲</div>
+          </div>
+          <div class="court-stat">
+            <div class="num" style="color:var(--warning);">2</div>
+            <div class="label">室外空闲</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hot Activities -->
+      <div class="hot-activities">
+        <div class="hot-header">
+          <h4>热门活动</h4>
+          <span>更多 ></span>
+        </div>
+        <div class="hot-scroll">
+          <div class="hot-card">
+            <div class="hot-card-img" style="background:linear-gradient(135deg,#2255CC,#4488EE);">
+              <span class="tag">畅打</span>
+              <svg width="40" height="40" viewBox="0 0 40 40" opacity="0.3"><circle cx="20" cy="20" r="16" fill="none" stroke="white" stroke-width="2"/><path d="M12 20c0-8 16-8 16 0s-16 8-16 0" fill="none" stroke="white" stroke-width="1.5"/></svg>
+            </div>
+            <div class="hot-card-info">
+              <h5>周三畅打之夜</h5>
+              <p>3月20日 19:00</p>
+              <span class="price">&#165;68<span style="font-size:11px;color:var(--text-hint);font-weight:400;">/人</span></span>
+            </div>
+          </div>
+          <div class="hot-card">
+            <div class="hot-card-img" style="background:linear-gradient(135deg,#FF9500,#FFB340);">
+              <span class="tag">团课</span>
+              <svg width="40" height="40" viewBox="0 0 40 40" opacity="0.3"><circle cx="14" cy="16" r="5" fill="white"/><circle cx="26" cy="16" r="5" fill="white"/><path d="M6 34c0-6 4-10 8-10s8 4 8 10M18 34c0-6 4-10 8-10s8 4 8 10" fill="white"/></svg>
+            </div>
+            <div class="hot-card-info">
+              <h5>初级网球团课</h5>
+              <p>每周六 10:00</p>
+              <span class="price">&#165;128<span style="font-size:11px;color:var(--text-hint);font-weight:400;">/次</span></span>
+            </div>
+          </div>
+          <div class="hot-card">
+            <div class="hot-card-img" style="background:linear-gradient(135deg,#FF3B30,#FF6B60);">
+              <span class="tag">赛事</span>
+              <svg width="40" height="40" viewBox="0 0 40 40" opacity="0.3"><path d="M20 4l4 8h9l-7 5 3 9-9-6-9 6 3-9-7-5h9z" fill="white"/></svg>
+            </div>
+            <div class="hot-card-info">
+              <h5>春季会员锦标赛</h5>
+              <p>4月12日-13日</p>
+              <span class="price">&#165;200<span style="font-size:11px;color:var(--text-hint);font-weight:400;">/人</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="height:20px;"></div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <div class="tab-item active">
+        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 12l9-8 9 8" fill="none" stroke="#2255CC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12v7a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-7" fill="none" stroke="#2255CC" stroke-width="1.8"/></svg>
+        <span>首页</span>
+      </div>
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="1.5" fill="none" stroke="#999" stroke-width="1.8"/><path d="M4 10h16M9 5v14M15 5v14" stroke="#999" stroke-width="1"/></svg>
+        <span>预订</span>
+      </div>
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#999" stroke-width="1.8"/><path d="M12 7v5l3.5 3.5" stroke="#999" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>活动</span>
+      </div>
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M7 5h10l-1 13H8L7 5z" fill="none" stroke="#999" stroke-width="1.8"/><path d="M10 5V3.5h4V5" fill="none" stroke="#999" stroke-width="1.5"/></svg>
+        <span>商城</span>
+      </div>
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="#999" stroke-width="1.8"/><path d="M5 20c0-4 3-7 7-7s7 3 7 7" fill="none" stroke="#999" stroke-width="1.8"/></svg>
+        <span>我的</span>
+      </div>
+      <div class="home-ind"></div>
+    </div>
+  </div>
+  <span class="page-label">1 / 首页</span>
+</div>
+
+<!-- ==================== PAGE 2: BOOKING ==================== -->
+<div class="page-wrapper">
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="icons">
+        <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="0.5" fill="#1A1A2E"/><rect x="4.5" y="4" width="3" height="8" rx="0.5" fill="#1A1A2E"/><rect x="9" y="2" width="3" height="10" rx="0.5" fill="#1A1A2E"/><rect x="13" y="0" width="3" height="12" rx="0.5" fill="#1A1A2E"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 2C5 2 2.5 3.5 1 5.5L2.5 7C3.7 5.3 5.7 4 8 4s4.3 1.3 5.5 3L15 5.5C13.5 3.5 11 2 8 2z" fill="#1A1A2E"/><circle cx="8" cy="10" r="2" fill="#1A1A2E"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="22" height="10" rx="2" stroke="#1A1A2E" stroke-width="1" fill="none"/><rect x="23" y="4" width="2" height="4" rx="0.5" fill="#1A1A2E"/><rect x="1.5" y="2.5" width="16" height="7" rx="1" fill="#34C759"/></svg>
+      </div>
+    </div>
+    <div class="nav-bar">
+      <span class="title">场地预订</span>
+    </div>
+    <div class="page-content" style="height:calc(812px - 88px - 83px);">
+      <!-- Date Picker -->
+      <div class="date-picker">
+        <div class="date-item active">
+          <div class="weekday">今天</div>
+          <div class="day">19</div>
+          <div class="month">3月</div>
+        </div>
+        <div class="date-item">
+          <div class="weekday">周五</div>
+          <div class="day">20</div>
+          <div class="month">3月</div>
+        </div>
+        <div class="date-item">
+          <div class="weekday">周六</div>
+          <div class="day">21</div>
+          <div class="month">3月</div>
+        </div>
+        <div class="date-item">
+          <div class="weekday">周日</div>
+          <div class="day">22</div>
+          <div class="month">3月</div>
+        </div>
+        <div class="date-item">
+          <div class="weekday">周一</div>
+          <div class="day">23</div>
+          <div class="month">3月</div>
+        </div>
+        <div class="date-item">
+          <div class="weekday">周二</div>
+          <div class="day">24</div>
+          <div class="month">3月</div>
+        </div>
+      </div>
+
+      <!-- Filter -->
+      <div class="court-filter">
+        <span class="filter-chip active">全部</span>
+        <span class="filter-chip">室内</span>
+        <span class="filter-chip">室外</span>
+        <span class="filter-chip">练习场</span>
+      </div>
+
+      <!-- Time legend -->
+      <div class="time-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--success);"></div>可预约</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#FF3B30;"></div>已满</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--warning);"></div>维护</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--primary);"></div>已选</div>
+      </div>
+
+      <!-- Time labels -->
+      <div style="display:flex;gap:3px;padding:2px 12px 0;flex-wrap:wrap;">
+        <span style="width:36px;text-align:center;font-size:8px;color:var(--text-hint);">8:00</span>
+        <span style="width:36px;text-align:center;font-size:8px;color:var(--text-hint);">9:00</span>
+        <span style="width:36px;text-align:center;font-size:8px;color:var(--text-hint);">10:00</span>
+        <span style="width:36px;text-align:center;font-size:8px;color:var(--text-hint);">11:00</span>
+        <span style="width:36px;text-align:center;font-size:8px;color:var(--text-hint);">12:00</span>
+        <span style="width:36px;text-align:center;font-size:8px;color:var(--text-hint);">13:00</span>
+        <span style="width:36px;text-align:center;font-size:8px;color:var(--text-hint);">14:00</span>
+        <span style="width:36px;text-align:center;font-size:8px;color:var(--text-hint);">15:00</span>
+        <span style="width:36px;text-align:center;font-size:8px;color:var(--text-hint);">16:00</span>
+      </div>
+
+      <!-- Court 1 -->
+      <div class="court-row">
+        <div class="court-row-header">
+          <span class="name">1号场 · 室内硬地</span>
+          <span class="badge badge-blue">室内</span>
+        </div>
+        <div class="time-slots">
+          <div class="time-slot slot-booked">8:00</div>
+          <div class="time-slot slot-booked">9:00</div>
+          <div class="time-slot slot-available">10:00</div>
+          <div class="time-slot slot-selected">11:00</div>
+          <div class="time-slot slot-available">12:00</div>
+          <div class="time-slot slot-available">13:00</div>
+          <div class="time-slot slot-booked">14:00</div>
+          <div class="time-slot slot-available">15:00</div>
+          <div class="time-slot slot-available">16:00</div>
+        </div>
+      </div>
+
+      <!-- Court 2 -->
+      <div class="court-row">
+        <div class="court-row-header">
+          <span class="name">2号场 · 室内硬地</span>
+          <span class="badge badge-blue">室内</span>
+        </div>
+        <div class="time-slots">
+          <div class="time-slot slot-available">8:00</div>
+          <div class="time-slot slot-available">9:00</div>
+          <div class="time-slot slot-booked">10:00</div>
+          <div class="time-slot slot-booked">11:00</div>
+          <div class="time-slot slot-booked">12:00</div>
+          <div class="time-slot slot-available">13:00</div>
+          <div class="time-slot slot-available">14:00</div>
+          <div class="time-slot slot-booked">15:00</div>
+          <div class="time-slot slot-available">16:00</div>
+        </div>
+      </div>
+
+      <!-- Court 3 -->
+      <div class="court-row">
+        <div class="court-row-header">
+          <span class="name">3号场 · 室外红土</span>
+          <span class="badge badge-green">室外</span>
+        </div>
+        <div class="time-slots">
+          <div class="time-slot slot-available">8:00</div>
+          <div class="time-slot slot-available">9:00</div>
+          <div class="time-slot slot-available">10:00</div>
+          <div class="time-slot slot-maintenance">11:00</div>
+          <div class="time-slot slot-maintenance">12:00</div>
+          <div class="time-slot slot-available">13:00</div>
+          <div class="time-slot slot-available">14:00</div>
+          <div class="time-slot slot-available">15:00</div>
+          <div class="time-slot slot-booked">16:00</div>
+        </div>
+      </div>
+
+      <!-- Court 4 -->
+      <div class="court-row">
+        <div class="court-row-header">
+          <span class="name">4号场 · 室外硬地</span>
+          <span class="badge badge-green">室外</span>
+        </div>
+        <div class="time-slots">
+          <div class="time-slot slot-booked">8:00</div>
+          <div class="time-slot slot-available">9:00</div>
+          <div class="time-slot slot-available">10:00</div>
+          <div class="time-slot slot-available">11:00</div>
+          <div class="time-slot slot-available">12:00</div>
+          <div class="time-slot slot-booked">13:00</div>
+          <div class="time-slot slot-booked">14:00</div>
+          <div class="time-slot slot-available">15:00</div>
+          <div class="time-slot slot-available">16:00</div>
+        </div>
+      </div>
+
+      <!-- Court 5 -->
+      <div class="court-row">
+        <div class="court-row-header">
+          <span class="name">5号场 · 练习墙</span>
+          <span class="badge badge-orange">练习</span>
+        </div>
+        <div class="time-slots">
+          <div class="time-slot slot-available">8:00</div>
+          <div class="time-slot slot-available">9:00</div>
+          <div class="time-slot slot-available">10:00</div>
+          <div class="time-slot slot-available">11:00</div>
+          <div class="time-slot slot-available">12:00</div>
+          <div class="time-slot slot-available">13:00</div>
+          <div class="time-slot slot-booked">14:00</div>
+          <div class="time-slot slot-booked">15:00</div>
+          <div class="time-slot slot-available">16:00</div>
+        </div>
+      </div>
+      <div style="height:20px;"></div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 12l9-8 9 8" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12v7a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-7" fill="none" stroke="#999" stroke-width="1.8"/></svg>
+        <span>首页</span>
+      </div>
+      <div class="tab-item active">
+        <svg width="24" height="24" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="1.5" fill="none" stroke="#2255CC" stroke-width="1.8"/><path d="M4 10h16M9 5v14M15 5v14" stroke="#2255CC" stroke-width="1"/></svg>
+        <span>预订</span>
+      </div>
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#999" stroke-width="1.8"/><path d="M12 7v5l3.5 3.5" stroke="#999" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>活动</span>
+      </div>
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M7 5h10l-1 13H8L7 5z" fill="none" stroke="#999" stroke-width="1.8"/><path d="M10 5V3.5h4V5" fill="none" stroke="#999" stroke-width="1.5"/></svg>
+        <span>商城</span>
+      </div>
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="#999" stroke-width="1.8"/><path d="M5 20c0-4 3-7 7-7s7 3 7 7" fill="none" stroke="#999" stroke-width="1.8"/></svg>
+        <span>我的</span>
+      </div>
+      <div class="home-ind"></div>
+    </div>
+  </div>
+  <span class="page-label">2 / 场地预订</span>
+</div>
+
+<!-- ==================== PAGE 3: BOOKING CONFIRM ==================== -->
+<div class="page-wrapper">
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="icons">
+        <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="0.5" fill="#1A1A2E"/><rect x="4.5" y="4" width="3" height="8" rx="0.5" fill="#1A1A2E"/><rect x="9" y="2" width="3" height="10" rx="0.5" fill="#1A1A2E"/><rect x="13" y="0" width="3" height="12" rx="0.5" fill="#1A1A2E"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 2C5 2 2.5 3.5 1 5.5L2.5 7C3.7 5.3 5.7 4 8 4s4.3 1.3 5.5 3L15 5.5C13.5 3.5 11 2 8 2z" fill="#1A1A2E"/><circle cx="8" cy="10" r="2" fill="#1A1A2E"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="22" height="10" rx="2" stroke="#1A1A2E" stroke-width="1" fill="none"/><rect x="23" y="4" width="2" height="4" rx="0.5" fill="#1A1A2E"/><rect x="1.5" y="2.5" width="16" height="7" rx="1" fill="#34C759"/></svg>
+      </div>
+    </div>
+    <div class="nav-bar">
+      <div class="back">
+        <svg width="20" height="20" viewBox="0 0 20 20"><path d="M13 4l-6 6 6 6" fill="none" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="title">确认预订</span>
+    </div>
+    <div class="page-content no-tab" style="height:calc(812px - 88px - 80px);">
+
+      <!-- Court Card -->
+      <div class="confirm-card">
+        <div class="confirm-card-img">
+          <div style="position:absolute;right:-20px;bottom:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.08);"></div>
+          <div class="court-label">
+            <h3>1号场</h3>
+            <p>室内硬地 | 标准尺寸</p>
+          </div>
+        </div>
+        <div class="confirm-details">
+          <div class="confirm-row">
+            <span class="label">预订日期</span>
+            <span class="value">2026年3月19日 周四</span>
+          </div>
+          <div class="confirm-row">
+            <span class="label">预订时段</span>
+            <span class="value">11:00 - 12:00（1小时）</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fee Details -->
+      <div style="margin:0 12px 12px;background:var(--white);border-radius:12px;padding:16px;">
+        <div style="font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:12px;">费用明细</div>
+        <div class="confirm-row">
+          <span class="label">场地费</span>
+          <span class="value">&#165;120.00</span>
+        </div>
+        <div class="confirm-row">
+          <span class="label">会员折扣（金卡 8折）</span>
+          <span class="value discount">-&#165;24.00</span>
+        </div>
+        <div class="confirm-row" style="border-top:1px dashed var(--border);padding-top:12px;">
+          <span class="label" style="font-weight:600;color:var(--text-primary);">实付金额</span>
+          <span class="value price">&#165;96.00</span>
+        </div>
+      </div>
+
+      <!-- Payment Methods -->
+      <div class="pay-methods">
+        <div class="pay-method" style="border-bottom:0.5px solid var(--border);">
+          <div class="left">
+            <div style="width:32px;height:32px;border-radius:8px;background:rgba(34,85,204,0.1);display:flex;align-items:center;justify-content:center;">
+              <svg width="18" height="18" viewBox="0 0 18 18"><rect x="2" y="4" width="14" height="10" rx="2" fill="none" stroke="#2255CC" stroke-width="1.5"/><path d="M2 8h14" stroke="#2255CC" stroke-width="1"/></svg>
+            </div>
+            <div>
+              <div class="name">余额支付</div>
+              <div class="desc">余额 &#165;326.50</div>
+            </div>
+          </div>
+          <div class="radio-outer checked"><div class="radio-inner"></div></div>
+        </div>
+        <div class="pay-method">
+          <div class="left">
+            <div style="width:32px;height:32px;border-radius:8px;background:rgba(52,199,89,0.1);display:flex;align-items:center;justify-content:center;">
+              <svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7" fill="none" stroke="#34C759" stroke-width="1.5"/><path d="M6 9l2 2 4-4" fill="none" stroke="#34C759" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <div class="name">微信支付</div>
+              <div class="desc"></div>
+            </div>
+          </div>
+          <div class="radio-outer"></div>
+        </div>
+      </div>
+
+      <!-- Notice -->
+      <div class="notice-section">
+        <div class="notice-header">
+          <span>订场须知</span>
+          <svg width="16" height="16" viewBox="0 0 16 16"><path d="M5 6l3 3 3-3" fill="none" stroke="#999" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Action -->
+    <div class="bottom-action">
+      <div class="pay-btn">确认支付 &#165;96.00</div>
+    </div>
+    <div class="home-ind"></div>
+  </div>
+  <span class="page-label">3 / 预订确认</span>
+</div>
+
+<!-- ==================== PAGE 4: ACTIVITIES ==================== -->
+<div class="page-wrapper">
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="icons">
+        <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="0.5" fill="#1A1A2E"/><rect x="4.5" y="4" width="3" height="8" rx="0.5" fill="#1A1A2E"/><rect x="9" y="2" width="3" height="10" rx="0.5" fill="#1A1A2E"/><rect x="13" y="0" width="3" height="12" rx="0.5" fill="#1A1A2E"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 2C5 2 2.5 3.5 1 5.5L2.5 7C3.7 5.3 5.7 4 8 4s4.3 1.3 5.5 3L15 5.5C13.5 3.5 11 2 8 2z" fill="#1A1A2E"/><circle cx="8" cy="10" r="2" fill="#1A1A2E"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="22" height="10" rx="2" stroke="#1A1A2E" stroke-width="1" fill="none"/><rect x="23" y="4" width="2" height="4" rx="0.5" fill="#1A1A2E"/><rect x="1.5" y="2.5" width="16" height="7" rx="1" fill="#34C759"/></svg>
+      </div>
+    </div>
+    <div class="nav-bar">
+      <span class="title">活动中心</span>
+    </div>
+    <div class="page-content" style="height:calc(812px - 88px - 83px);">
+
+      <!-- Tabs -->
+      <div class="inline-tabs">
+        <div class="inline-tab active">全部</div>
+        <div class="inline-tab">畅打</div>
+        <div class="inline-tab">团课</div>
+        <div class="inline-tab">赛事</div>
+        <div class="inline-tab">主题活动</div>
+      </div>
+
+      <!-- Activity 1 -->
+      <div class="activity-card">
+        <div class="activity-img" style="background:linear-gradient(135deg,#2255CC,#4488EE);">
+          <div class="type-tag" style="background:var(--primary);">畅打</div>
+          <svg width="60" height="60" viewBox="0 0 60 60" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);opacity:0.15;"><circle cx="30" cy="30" r="25" fill="none" stroke="white" stroke-width="3"/><path d="M15 30c0-12 30-12 30 0s-30 12-30 0" fill="none" stroke="white" stroke-width="2"/></svg>
+        </div>
+        <div class="activity-body">
+          <h4>周三畅打之夜</h4>
+          <div class="activity-meta">
+            <span><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#999" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#999" stroke-width="1" stroke-linecap="round"/></svg> 3月20日 周五 19:00-22:00</span>
+            <span><svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1C3.5 1 1 3 1 6c0 4 5 5.5 5 5.5s5-1.5 5-5.5C11 3 8.5 1 6 1z" fill="none" stroke="#999" stroke-width="1"/><circle cx="6" cy="5.5" r="1.5" fill="none" stroke="#999" stroke-width="0.8"/></svg> 1号场 + 2号场（室内）</span>
+          </div>
+          <div class="activity-footer">
+            <div class="slots">
+              <div class="text">已报 12/20 人</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:60%;"></div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-left:12px;">
+              <span class="price-tag"><span class="unit">&#165;</span>68</span>
+              <span class="btn btn-primary" style="padding:7px 16px;font-size:13px;">报名</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity 2 -->
+      <div class="activity-card">
+        <div class="activity-img" style="background:linear-gradient(135deg,#FF9500,#FFB340);">
+          <div class="type-tag" style="background:#FF9500;">团课</div>
+        </div>
+        <div class="activity-body">
+          <h4>初级网球团课（第12期）</h4>
+          <div class="activity-meta">
+            <span><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#999" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#999" stroke-width="1" stroke-linecap="round"/></svg> 每周六 10:00-11:30</span>
+            <span><svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1C3.5 1 1 3 1 6c0 4 5 5.5 5 5.5s5-1.5 5-5.5C11 3 8.5 1 6 1z" fill="none" stroke="#999" stroke-width="1"/><circle cx="6" cy="5.5" r="1.5" fill="none" stroke="#999" stroke-width="0.8"/></svg> 3号场（室外红土）</span>
+          </div>
+          <div class="activity-footer">
+            <div class="slots">
+              <div class="text">已报 6/8 人</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:75%;background:var(--warning);"></div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-left:12px;">
+              <span class="price-tag"><span class="unit">&#165;</span>128</span>
+              <span class="btn btn-primary" style="padding:7px 16px;font-size:13px;">报名</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity 3 -->
+      <div class="activity-card">
+        <div class="activity-img" style="background:linear-gradient(135deg,#FF3B30,#FF6B60);">
+          <div class="type-tag" style="background:#FF3B30;">赛事</div>
+        </div>
+        <div class="activity-body">
+          <h4>T-LINE 春季会员锦标赛</h4>
+          <div class="activity-meta">
+            <span><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#999" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#999" stroke-width="1" stroke-linecap="round"/></svg> 4月12日-13日 全天</span>
+            <span><svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1C3.5 1 1 3 1 6c0 4 5 5.5 5 5.5s5-1.5 5-5.5C11 3 8.5 1 6 1z" fill="none" stroke="#999" stroke-width="1"/><circle cx="6" cy="5.5" r="1.5" fill="none" stroke="#999" stroke-width="0.8"/></svg> 全部场地</span>
+          </div>
+          <div class="activity-footer">
+            <div class="slots">
+              <div class="text">已报 28/32 人</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:87%;background:var(--danger);"></div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-left:12px;">
+              <span class="price-tag"><span class="unit">&#165;</span>200</span>
+              <span class="btn btn-primary" style="padding:7px 16px;font-size:13px;">报名</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="height:20px;"></div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 12l9-8 9 8" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12v7a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-7" fill="none" stroke="#999" stroke-width="1.8"/></svg>
+        <span>首页</span>
+      </div>
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="1.5" fill="none" stroke="#999" stroke-width="1.8"/><path d="M4 10h16M9 5v14M15 5v14" stroke="#999" stroke-width="1"/></svg>
+        <span>预订</span>
+      </div>
+      <div class="tab-item active">
+        <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#2255CC" stroke-width="1.8"/><path d="M12 7v5l3.5 3.5" stroke="#2255CC" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>活动</span>
+      </div>
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M7 5h10l-1 13H8L7 5z" fill="none" stroke="#999" stroke-width="1.8"/><path d="M10 5V3.5h4V5" fill="none" stroke="#999" stroke-width="1.5"/></svg>
+        <span>商城</span>
+      </div>
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="#999" stroke-width="1.8"/><path d="M5 20c0-4 3-7 7-7s7 3 7 7" fill="none" stroke="#999" stroke-width="1.8"/></svg>
+        <span>我的</span>
+      </div>
+      <div class="home-ind"></div>
+    </div>
+  </div>
+  <span class="page-label">4 / 活动列表</span>
+</div>
+
+<!-- ==================== PAGE 5: SHOP ==================== -->
+<div class="page-wrapper">
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="icons">
+        <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="0.5" fill="#1A1A2E"/><rect x="4.5" y="4" width="3" height="8" rx="0.5" fill="#1A1A2E"/><rect x="9" y="2" width="3" height="10" rx="0.5" fill="#1A1A2E"/><rect x="13" y="0" width="3" height="12" rx="0.5" fill="#1A1A2E"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 2C5 2 2.5 3.5 1 5.5L2.5 7C3.7 5.3 5.7 4 8 4s4.3 1.3 5.5 3L15 5.5C13.5 3.5 11 2 8 2z" fill="#1A1A2E"/><circle cx="8" cy="10" r="2" fill="#1A1A2E"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="22" height="10" rx="2" stroke="#1A1A2E" stroke-width="1" fill="none"/><rect x="23" y="4" width="2" height="4" rx="0.5" fill="#1A1A2E"/><rect x="1.5" y="2.5" width="16" height="7" rx="1" fill="#34C759"/></svg>
+      </div>
+    </div>
+    <div class="nav-bar">
+      <span class="title">商城</span>
+    </div>
+    <div class="page-content" style="height:calc(812px - 88px - 83px);">
+
+      <!-- Tabs -->
+      <div class="inline-tabs">
+        <div class="inline-tab active">课程</div>
+        <div class="inline-tab">球具</div>
+        <div class="inline-tab">服务</div>
+      </div>
+
+      <div class="section-title">私教课程</div>
+
+      <!-- Coach 1 -->
+      <div class="coach-card">
+        <div class="coach-avatar" style="background:linear-gradient(135deg,#2255CC,#4488EE);">王</div>
+        <div class="coach-info">
+          <h5>王教练</h5>
+          <div class="desc">前省队选手 | 10年教学经验</div>
+          <div class="tags">
+            <span class="badge badge-blue">初级</span>
+            <span class="badge badge-blue">中级</span>
+            <span class="badge badge-green">高级</span>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:18px;font-weight:800;color:var(--danger);">&#165;280</div>
+          <div style="font-size:11px;color:var(--text-hint);">/课时</div>
+        </div>
+      </div>
+
+      <!-- Coach 2 -->
+      <div class="coach-card">
+        <div class="coach-avatar" style="background:linear-gradient(135deg,#FF9500,#FFB340);">李</div>
+        <div class="coach-info">
+          <h5>李教练</h5>
+          <div class="desc">ITF认证教练 | 5年教学经验</div>
+          <div class="tags">
+            <span class="badge badge-blue">初级</span>
+            <span class="badge badge-blue">中级</span>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:18px;font-weight:800;color:var(--danger);">&#165;220</div>
+          <div style="font-size:11px;color:var(--text-hint);">/课时</div>
+        </div>
+      </div>
+
+      <div class="section-title">课包优惠</div>
+
+      <!-- Package 1 -->
+      <div class="package-card">
+        <div class="package-info">
+          <h5>10次课包</h5>
+          <p>有效期3个月 | 可选教练</p>
+        </div>
+        <div class="package-price">
+          <div class="amount"><span class="yuan">&#165;</span>2,480</div>
+          <div class="original">&#165;2,800</div>
+        </div>
+      </div>
+
+      <!-- Package 2 -->
+      <div class="package-card">
+        <div class="package-info">
+          <h5>20次课包</h5>
+          <p>有效期6个月 | 可选教练 | 赠2次</p>
+        </div>
+        <div class="package-price">
+          <div class="amount"><span class="yuan">&#165;</span>4,580</div>
+          <div class="original">&#165;5,600</div>
+        </div>
+      </div>
+
+      <div class="section-title">热门球具</div>
+
+      <!-- Product Grid -->
+      <div class="product-grid">
+        <div class="product-card">
+          <div class="product-img" style="background:#F8F9FC;">
+            <span class="stock">现货</span>
+            <svg width="48" height="48" viewBox="0 0 48 48"><ellipse cx="24" cy="38" rx="12" ry="2" fill="#E8E8F0"/><rect x="22" y="8" width="4" height="28" rx="2" fill="#2255CC"/><ellipse cx="24" cy="8" rx="10" ry="6" fill="none" stroke="#2255CC" stroke-width="2"/></svg>
+          </div>
+          <div class="product-info">
+            <h5>Wilson Pro Staff 球拍</h5>
+            <span class="price"><span class="yuan">&#165;</span>1,680</span>
+          </div>
+        </div>
+        <div class="product-card">
+          <div class="product-img" style="background:#F8F9FC;">
+            <span class="stock">现货</span>
+            <svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="10" fill="#C8E632" stroke="#A8C420" stroke-width="2"/><path d="M14 24c0-8 20-8 20 0s-20 8-20 0" fill="none" stroke="#A8C420" stroke-width="1.5"/></svg>
+          </div>
+          <div class="product-info">
+            <h5>Wilson 比赛用球（3只装）</h5>
+            <span class="price"><span class="yuan">&#165;</span>45</span>
+          </div>
+        </div>
+        <div class="product-card">
+          <div class="product-img" style="background:#F8F9FC;">
+            <svg width="48" height="48" viewBox="0 0 48 48"><rect x="12" y="14" width="24" height="20" rx="3" fill="none" stroke="#2255CC" stroke-width="2"/><path d="M18 14V10a6 6 0 0112 0v4" fill="none" stroke="#2255CC" stroke-width="2"/></svg>
+          </div>
+          <div class="product-info">
+            <h5>T-LINE 运动背包</h5>
+            <span class="price"><span class="yuan">&#165;</span>298</span>
+          </div>
+        </div>
+        <div class="product-card">
+          <div class="product-img" style="background:#F8F9FC;">
+            <svg width="48" height="48" viewBox="0 0 48 48"><rect x="10" y="16" width="28" height="16" rx="2" fill="none" stroke="#FF9500" stroke-width="2"/><path d="M16 22h16M16 28h10" stroke="#FF9500" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div class="product-info">
+            <h5>吸汗手胶（3条装）</h5>
+            <span class="price"><span class="yuan">&#165;</span>35</span>
+          </div>
+        </div>
+      </div>
+      <div style="height:20px;"></div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 12l9-8 9 8" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12v7a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-7" fill="none" stroke="#999" stroke-width="1.8"/></svg>
+        <span>首页</span>
+      </div>
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="1.5" fill="none" stroke="#999" stroke-width="1.8"/><path d="M4 10h16M9 5v14M15 5v14" stroke="#999" stroke-width="1"/></svg>
+        <span>预订</span>
+      </div>
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#999" stroke-width="1.8"/><path d="M12 7v5l3.5 3.5" stroke="#999" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>活动</span>
+      </div>
+      <div class="tab-item active">
+        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M7 5h10l-1 13H8L7 5z" fill="none" stroke="#2255CC" stroke-width="1.8"/><path d="M10 5V3.5h4V5" fill="none" stroke="#2255CC" stroke-width="1.5"/></svg>
+        <span>商城</span>
+      </div>
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="#999" stroke-width="1.8"/><path d="M5 20c0-4 3-7 7-7s7 3 7 7" fill="none" stroke="#999" stroke-width="1.8"/></svg>
+        <span>我的</span>
+      </div>
+      <div class="home-ind"></div>
+    </div>
+  </div>
+  <span class="page-label">5 / 商城</span>
+</div>
+
+<!-- ==================== PAGE 6: PROFILE ==================== -->
+<div class="page-wrapper">
+  <div class="phone-frame">
+    <div class="status-bar primary">
+      <span class="time" style="color:#fff;">9:41</span>
+      <div class="icons">
+        <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="0.5" fill="#fff"/><rect x="4.5" y="4" width="3" height="8" rx="0.5" fill="#fff"/><rect x="9" y="2" width="3" height="10" rx="0.5" fill="#fff"/><rect x="13" y="0" width="3" height="12" rx="0.5" fill="#fff"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 2C5 2 2.5 3.5 1 5.5L2.5 7C3.7 5.3 5.7 4 8 4s4.3 1.3 5.5 3L15 5.5C13.5 3.5 11 2 8 2z" fill="#fff"/><circle cx="8" cy="10" r="2" fill="#fff"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="22" height="10" rx="2" stroke="#fff" stroke-width="1" fill="none"/><rect x="23" y="4" width="2" height="4" rx="0.5" fill="#fff"/><rect x="1.5" y="2.5" width="16" height="7" rx="1" fill="#34C759"/></svg>
+      </div>
+    </div>
+    <div class="page-content" style="height:calc(812px - 44px - 83px);">
+
+      <!-- Profile Header -->
+      <div class="profile-header">
+        <div class="profile-user">
+          <div class="profile-avatar">
+            <svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="10" r="5" fill="rgba(255,255,255,0.6)"/><path d="M5 25c0-5 4-9 9-9s9 4 9 9" fill="rgba(255,255,255,0.6)"/></svg>
+          </div>
+          <div class="profile-info">
+            <h3>张明</h3>
+            <div class="profile-tags">
+              <span class="profile-tag">金卡会员</span>
+              <span class="profile-tag" style="background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.9);">UTR 5.2</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wallet Grid -->
+      <div class="wallet-grid">
+        <div class="wallet-item">
+          <div class="num">326.50</div>
+          <div class="label">余额（元）</div>
+        </div>
+        <div class="wallet-item" style="border-left:0.5px solid var(--border);border-right:0.5px solid var(--border);">
+          <div class="num">1,280</div>
+          <div class="label">积分</div>
+        </div>
+        <div class="wallet-item">
+          <div class="num">3</div>
+          <div class="label">优惠券</div>
+        </div>
+      </div>
+
+      <!-- Order Grid -->
+      <div class="order-grid">
+        <div class="order-item">
+          <div class="order-badge">2</div>
+          <svg width="24" height="24" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="#FF9500" stroke-width="1.8"/><path d="M8 12h8M12 8v8" stroke="#FF9500" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span>待支付</span>
+        </div>
+        <div class="order-item">
+          <div class="order-badge">3</div>
+          <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="#2255CC" stroke-width="1.8"/><path d="M12 7v5l3 3" stroke="#2255CC" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span>待使用</span>
+        </div>
+        <div class="order-item">
+          <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="#34C759" stroke-width="1.8"/><path d="M8 12l3 3 5-5" stroke="#34C759" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>已完成</span>
+        </div>
+        <div class="order-item">
+          <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="#999" stroke-width="1.8"/><path d="M9 9l6 6M15 9l-6 6" stroke="#999" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span>退款</span>
+        </div>
+      </div>
+
+      <!-- Function List -->
+      <div class="func-list">
+        <div class="list-item">
+          <div class="left">
+            <div class="icon-box" style="background:rgba(34,85,204,0.08);">
+              <svg width="20" height="20" viewBox="0 0 20 20"><rect x="3" y="4" width="14" height="12" rx="1.5" fill="none" stroke="#2255CC" stroke-width="1.5"/><path d="M3 8h14M7 4v12M13 4v12" stroke="#2255CC" stroke-width="0.8"/></svg>
+            </div>
+            <span style="font-size:14px;color:var(--text-primary);">我的预约</span>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" fill="none" stroke="#CCC" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="list-item">
+          <div class="left">
+            <div class="icon-box" style="background:rgba(255,149,0,0.08);">
+              <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="7" r="3" fill="none" stroke="#FF9500" stroke-width="1.5"/><path d="M4 17c0-4 3-6 6-6s6 2 6 6" fill="none" stroke="#FF9500" stroke-width="1.5"/></svg>
+            </div>
+            <span style="font-size:14px;color:var(--text-primary);">我的课程</span>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" fill="none" stroke="#CCC" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="list-item">
+          <div class="left">
+            <div class="icon-box" style="background:rgba(200,230,50,0.15);">
+              <svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 2l2 4h5l-4 3 1.5 5L10 11l-4.5 3L7 9 3 6h5z" fill="none" stroke="#7D9A00" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            </div>
+            <span style="font-size:14px;color:var(--text-primary);">会员中心</span>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" fill="none" stroke="#CCC" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="list-item">
+          <div class="left">
+            <div class="icon-box" style="background:rgba(255,59,48,0.08);">
+              <svg width="20" height="20" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3" fill="none" stroke="#FF3B30" stroke-width="1.5"/><circle cx="10" cy="7" r="1" fill="#FF3B30"/><path d="M10 10v4" stroke="#FF3B30" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <span style="font-size:14px;color:var(--text-primary);">消息通知</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--danger);"></span>
+            <svg width="16" height="16" viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" fill="none" stroke="#CCC" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+        <div class="list-item">
+          <div class="left">
+            <div class="icon-box" style="background:rgba(0,0,0,0.04);">
+              <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" fill="none" stroke="#666" stroke-width="1.5"/><circle cx="10" cy="10" r="2" fill="none" stroke="#666" stroke-width="1.5"/><path d="M10 3v2M10 15v2M3 10h2M15 10h2" stroke="#666" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <span style="font-size:14px;color:var(--text-primary);">设置</span>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" fill="none" stroke="#CCC" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="list-item">
+          <div class="left">
+            <div class="icon-box" style="background:rgba(0,0,0,0.04);">
+              <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" fill="none" stroke="#666" stroke-width="1.5"/><circle cx="10" cy="7" r="1" fill="#666"/><path d="M10 10v4" stroke="#666" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <span style="font-size:14px;color:var(--text-primary);">帮助中心</span>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" fill="none" stroke="#CCC" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+      <div style="height:20px;"></div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 12l9-8 9 8" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12v7a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-7" fill="none" stroke="#999" stroke-width="1.8"/></svg>
+        <span>首页</span>
+      </div>
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="1.5" fill="none" stroke="#999" stroke-width="1.8"/><path d="M4 10h16M9 5v14M15 5v14" stroke="#999" stroke-width="1"/></svg>
+        <span>预订</span>
+      </div>
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#999" stroke-width="1.8"/><path d="M12 7v5l3.5 3.5" stroke="#999" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>活动</span>
+      </div>
+      <div class="tab-item">
+        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M7 5h10l-1 13H8L7 5z" fill="none" stroke="#999" stroke-width="1.8"/><path d="M10 5V3.5h4V5" fill="none" stroke="#999" stroke-width="1.5"/></svg>
+        <span>商城</span>
+      </div>
+      <div class="tab-item active">
+        <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="#2255CC" stroke-width="1.8"/><path d="M5 20c0-4 3-7 7-7s7 3 7 7" fill="none" stroke="#2255CC" stroke-width="1.8"/></svg>
+        <span>我的</span>
+      </div>
+      <div class="home-ind"></div>
+    </div>
+  </div>
+  <span class="page-label">6 / 个人中心</span>
+</div>
+
+<!-- ==================== PAGE 7: MY BOOKINGS ==================== -->
+<div class="page-wrapper">
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="icons">
+        <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="0.5" fill="#1A1A2E"/><rect x="4.5" y="4" width="3" height="8" rx="0.5" fill="#1A1A2E"/><rect x="9" y="2" width="3" height="10" rx="0.5" fill="#1A1A2E"/><rect x="13" y="0" width="3" height="12" rx="0.5" fill="#1A1A2E"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 2C5 2 2.5 3.5 1 5.5L2.5 7C3.7 5.3 5.7 4 8 4s4.3 1.3 5.5 3L15 5.5C13.5 3.5 11 2 8 2z" fill="#1A1A2E"/><circle cx="8" cy="10" r="2" fill="#1A1A2E"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="22" height="10" rx="2" stroke="#1A1A2E" stroke-width="1" fill="none"/><rect x="23" y="4" width="2" height="4" rx="0.5" fill="#1A1A2E"/><rect x="1.5" y="2.5" width="16" height="7" rx="1" fill="#34C759"/></svg>
+      </div>
+    </div>
+    <div class="nav-bar">
+      <div class="back">
+        <svg width="20" height="20" viewBox="0 0 20 20"><path d="M13 4l-6 6 6 6" fill="none" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="title">我的预约</span>
+    </div>
+    <div class="page-content no-tab" style="height:calc(812px - 88px);">
+
+      <!-- Tabs -->
+      <div class="inline-tabs">
+        <div class="inline-tab active">即将开始</div>
+        <div class="inline-tab">历史记录</div>
+      </div>
+
+      <!-- Booking 1 -->
+      <div class="booking-card">
+        <div class="top">
+          <h4>1号场 · 室内硬地</h4>
+          <span class="badge badge-green">已支付</span>
+        </div>
+        <div class="meta">
+          <span><svg width="12" height="12" viewBox="0 0 12 12"><rect x="1" y="2" width="10" height="8" rx="1" fill="none" stroke="#999" stroke-width="1"/><path d="M1 5h10M4 2v-1M8 2v-1" stroke="#999" stroke-width="0.8"/></svg> 2026年3月19日 周四</span>
+          <span><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#999" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#999" stroke-width="1" stroke-linecap="round"/></svg> 11:00 - 12:00（1小时）</span>
+        </div>
+        <div class="countdown">距开始还有 1小时23分</div>
+        <div class="booking-actions">
+          <span class="btn btn-outline">取消预约</span>
+          <span class="btn btn-primary" style="padding:7px 16px;font-size:13px;">查看详情</span>
+        </div>
+      </div>
+
+      <!-- Booking 2 -->
+      <div class="booking-card">
+        <div class="top">
+          <h4>3号场 · 室外红土</h4>
+          <span class="badge badge-green">已支付</span>
+        </div>
+        <div class="meta">
+          <span><svg width="12" height="12" viewBox="0 0 12 12"><rect x="1" y="2" width="10" height="8" rx="1" fill="none" stroke="#999" stroke-width="1"/><path d="M1 5h10M4 2v-1M8 2v-1" stroke="#999" stroke-width="0.8"/></svg> 2026年3月22日 周日</span>
+          <span><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#999" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#999" stroke-width="1" stroke-linecap="round"/></svg> 14:00 - 16:00（2小时）</span>
+        </div>
+        <div class="countdown">距开始还有 3天4小时</div>
+        <div class="booking-actions">
+          <span class="btn btn-outline">取消预约</span>
+          <span class="btn btn-primary" style="padding:7px 16px;font-size:13px;">查看详情</span>
+        </div>
+      </div>
+
+      <!-- Booking 3 - upcoming activity -->
+      <div class="booking-card" style="border-left-color:var(--primary);">
+        <div class="top">
+          <h4>周三畅打之夜</h4>
+          <span class="badge badge-blue">活动</span>
+        </div>
+        <div class="meta">
+          <span><svg width="12" height="12" viewBox="0 0 12 12"><rect x="1" y="2" width="10" height="8" rx="1" fill="none" stroke="#999" stroke-width="1"/><path d="M1 5h10M4 2v-1M8 2v-1" stroke="#999" stroke-width="0.8"/></svg> 2026年3月20日 周五</span>
+          <span><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#999" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#999" stroke-width="1" stroke-linecap="round"/></svg> 19:00 - 22:00</span>
+          <span><svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1C3.5 1 1 3 1 6c0 4 5 5.5 5 5.5s5-1.5 5-5.5C11 3 8.5 1 6 1z" fill="none" stroke="#999" stroke-width="1"/><circle cx="6" cy="5.5" r="1.5" fill="none" stroke="#999" stroke-width="0.8"/></svg> 1号场 + 2号场</span>
+        </div>
+        <div class="countdown" style="background:rgba(34,85,204,0.06);">距开始还有 1天9小时</div>
+        <div class="booking-actions">
+          <span class="btn btn-primary" style="padding:7px 16px;font-size:13px;">查看详情</span>
+        </div>
+      </div>
+
+      <!-- Divider for history preview -->
+      <div style="padding:20px 16px 8px;">
+        <div style="font-size:13px;color:var(--text-hint);text-align:center;">-- 以下为历史记录预览 --</div>
+      </div>
+
+      <!-- History 1 -->
+      <div class="booking-card cancelled" style="border-left-color:#CCC;">
+        <div class="top">
+          <h4>2号场 · 室内硬地</h4>
+          <span class="badge" style="background:#F0F0F0;color:#999;">已完成</span>
+        </div>
+        <div class="meta">
+          <span><svg width="12" height="12" viewBox="0 0 12 12"><rect x="1" y="2" width="10" height="8" rx="1" fill="none" stroke="#BBB" stroke-width="1"/><path d="M1 5h10M4 2v-1M8 2v-1" stroke="#BBB" stroke-width="0.8"/></svg> 2026年3月15日 周一</span>
+          <span><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#BBB" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#BBB" stroke-width="1" stroke-linecap="round"/></svg> 10:00 - 11:00（1小时）</span>
+        </div>
+      </div>
+
+      <!-- History 2 -->
+      <div class="booking-card cancelled" style="border-left-color:var(--danger);">
+        <div class="top">
+          <h4>4号场 · 室外硬地</h4>
+          <span class="badge badge-red">已取消</span>
+        </div>
+        <div class="meta">
+          <span><svg width="12" height="12" viewBox="0 0 12 12"><rect x="1" y="2" width="10" height="8" rx="1" fill="none" stroke="#BBB" stroke-width="1"/><path d="M1 5h10M4 2v-1M8 2v-1" stroke="#BBB" stroke-width="0.8"/></svg> 2026年3月12日 周五</span>
+          <span><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#BBB" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#BBB" stroke-width="1" stroke-linecap="round"/></svg> 16:00 - 18:00（2小时）</span>
+        </div>
+      </div>
+      <div style="height:40px;"></div>
+    </div>
+    <div class="home-ind"></div>
+  </div>
+  <span class="page-label">7 / 我的预约</span>
+</div>
+
+<!-- ==================== PAGE 8: WALLET ==================== -->
+<div class="page-wrapper">
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="icons">
+        <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="0.5" fill="#1A1A2E"/><rect x="4.5" y="4" width="3" height="8" rx="0.5" fill="#1A1A2E"/><rect x="9" y="2" width="3" height="10" rx="0.5" fill="#1A1A2E"/><rect x="13" y="0" width="3" height="12" rx="0.5" fill="#1A1A2E"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 2C5 2 2.5 3.5 1 5.5L2.5 7C3.7 5.3 5.7 4 8 4s4.3 1.3 5.5 3L15 5.5C13.5 3.5 11 2 8 2z" fill="#1A1A2E"/><circle cx="8" cy="10" r="2" fill="#1A1A2E"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="22" height="10" rx="2" stroke="#1A1A2E" stroke-width="1" fill="none"/><rect x="23" y="4" width="2" height="4" rx="0.5" fill="#1A1A2E"/><rect x="1.5" y="2.5" width="16" height="7" rx="1" fill="#34C759"/></svg>
+      </div>
+    </div>
+    <div class="nav-bar">
+      <div class="back">
+        <svg width="20" height="20" viewBox="0 0 20 20"><path d="M13 4l-6 6 6 6" fill="none" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="title">我的钱包</span>
+    </div>
+    <div class="page-content no-tab" style="height:calc(812px - 88px);">
+
+      <!-- Wallet Hero -->
+      <div class="wallet-hero">
+        <div class="label">账户余额（元）</div>
+        <div class="amount"><span class="yuan">&#165;</span>326.50</div>
+        <div style="margin-top:16px;">
+          <span style="display:inline-block;padding:8px 24px;background:var(--accent);color:var(--text-primary);border-radius:8px;font-size:14px;font-weight:600;position:relative;z-index:1;">立即充值</span>
+        </div>
+      </div>
+
+      <div class="section-title">充值套餐</div>
+
+      <!-- Recharge Grid -->
+      <div class="recharge-grid">
+        <div class="recharge-item">
+          <div class="main"><span class="yuan">&#165;</span>100</div>
+          <div class="bonus">赠 &#165;5</div>
+        </div>
+        <div class="recharge-item popular">
+          <div class="main"><span class="yuan">&#165;</span>300</div>
+          <div class="bonus">赠 &#165;30</div>
+        </div>
+        <div class="recharge-item">
+          <div class="main"><span class="yuan">&#165;</span>500</div>
+          <div class="bonus">赠 &#165;60</div>
+        </div>
+        <div class="recharge-item">
+          <div class="main"><span class="yuan">&#165;</span>1000</div>
+          <div class="bonus">赠 &#165;150</div>
+        </div>
+      </div>
+
+      <!-- Transaction List -->
+      <div class="tx-list">
+        <div class="tx-header">交易记录</div>
+        <div class="tx-item">
+          <div class="left">
+            <div class="desc">场地预订 - 1号场</div>
+            <div class="time">2026-03-18 14:32</div>
+          </div>
+          <span class="amount minus">-&#165;96.00</span>
+        </div>
+        <div class="tx-item">
+          <div class="left">
+            <div class="desc">活动报名 - 畅打之夜</div>
+            <div class="time">2026-03-16 20:15</div>
+          </div>
+          <span class="amount minus">-&#165;68.00</span>
+        </div>
+        <div class="tx-item">
+          <div class="left">
+            <div class="desc">充值 - 300元套餐</div>
+            <div class="time">2026-03-15 10:08</div>
+          </div>
+          <span class="amount plus">+&#165;330.00</span>
+        </div>
+        <div class="tx-item">
+          <div class="left">
+            <div class="desc">退款 - 场地取消</div>
+            <div class="time">2026-03-12 09:44</div>
+          </div>
+          <span class="amount plus">+&#165;120.00</span>
+        </div>
+        <div class="tx-item">
+          <div class="left">
+            <div class="desc">场地预订 - 4号场</div>
+            <div class="time">2026-03-10 16:22</div>
+          </div>
+          <span class="amount minus">-&#165;120.00</span>
+        </div>
+        <div class="tx-item">
+          <div class="left">
+            <div class="desc">穿线服务</div>
+            <div class="time">2026-03-08 11:30</div>
+          </div>
+          <span class="amount minus">-&#165;40.00</span>
+        </div>
+      </div>
+      <div style="height:40px;"></div>
+    </div>
+    <div class="home-ind"></div>
+  </div>
+  <span class="page-label">8 / 我的钱包</span>
+</div>
+
+</div><!-- pages-container -->
+
+<!-- Color Spec Footer -->
+<div style="margin-top:40px;padding:24px;background:#fff;border-radius:12px;max-width:800px;">
+  <h3 style="font-size:16px;color:var(--text-primary);margin-bottom:16px;">品牌色彩规范</h3>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;">
+    <div style="text-align:center;">
+      <div style="width:64px;height:64px;border-radius:12px;background:#2255CC;"></div>
+      <div style="font-size:11px;color:var(--text-secondary);margin-top:6px;">主色<br/>#2255CC</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="width:64px;height:64px;border-radius:12px;background:#C8E632;"></div>
+      <div style="font-size:11px;color:var(--text-secondary);margin-top:6px;">点缀色<br/>#C8E632</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="width:64px;height:64px;border-radius:12px;background:#1A1A2E;"></div>
+      <div style="font-size:11px;color:var(--text-secondary);margin-top:6px;">文字主色<br/>#1A1A2E</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="width:64px;height:64px;border-radius:12px;background:#666680;"></div>
+      <div style="font-size:11px;color:var(--text-secondary);margin-top:6px;">文字辅色<br/>#666680</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="width:64px;height:64px;border-radius:12px;background:#F5F6FA;border:1px solid #E8E8F0;"></div>
+      <div style="font-size:11px;color:var(--text-secondary);margin-top:6px;">背景色<br/>#F5F6FA</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="width:64px;height:64px;border-radius:12px;background:#34C759;"></div>
+      <div style="font-size:11px;color:var(--text-secondary);margin-top:6px;">成功<br/>#34C759</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="width:64px;height:64px;border-radius:12px;background:#FF3B30;"></div>
+      <div style="font-size:11px;color:var(--text-secondary);margin-top:6px;">危险/价格<br/>#FF3B30</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="width:64px;height:64px;border-radius:12px;background:#FF9500;"></div>
+      <div style="font-size:11px;color:var(--text-secondary);margin-top:6px;">警告<br/>#FF9500</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

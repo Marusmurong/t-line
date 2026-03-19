@@ -1,0 +1,55 @@
+app:
+  name: tline-api
+  port: 8080
+  mode: debug
+
+database:
+  host: localhost
+  port: 5432
+  user: tline
+  password: tline123
+  dbname: tline
+  sslmode: disable
+  max_idle_conns: 10
+  max_open_conns: 100
+
+redis:
+  host: localhost
+  port: 6379
+  password: ""
+  db: 0
+
+log:
+  level: debug
+  filename: logs/tline.log
+  max_size: 100
+  max_backups: 5
+  max_age: 30
+  compress: false
+
+jwt:
+  secret: "your-jwt-secret-here"
+  access_expire_min: 120
+  refresh_expire_days: 30
+
+wechat:
+  app_id: "your-wechat-app-id"
+  app_secret: "your-wechat-app-secret"
+  mch_id: "your-mch-id"
+  mch_api_key: "your-mch-api-key"
+  notify_url: "https://your-domain.com/api/v1/payments/wechat-callback"
+
+sms:
+  provider: aliyun
+  access_key: "your-access-key"
+  secret: "your-secret"
+  sign_name: "T-Line"
+  template: "your-template-code"
+
+oss:
+  provider: aliyun
+  endpoint: "oss-cn-hangzhou.aliyuncs.com"
+  bucket: "tline-assets"
+  access_key: "your-access-key"
+  secret: "your-secret"
+  base_url: "https://tline-assets.oss-cn-hangzhou.aliyuncs.com"

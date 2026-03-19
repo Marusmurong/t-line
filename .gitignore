@@ -1,0 +1,43 @@
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Go
+backend/bin/
+backend/logs/
+backend/tmp/
+
+# Node
+node_modules/
+dist/
+.output/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Credentials
+*.pem
+*.key
+credentials.json
+
+# Local config (use config.example.yaml as template)
+backend/configs/config.yaml
+
+# Build
+build/
+
+# Docker
+docker-compose.override.yml
+
+# uni-app
+miniapp/unpackage/
+miniapp/dist/
+
+# Workflow runtime
+.workflow/active/*
+!.workflow/active/.gitkeep
