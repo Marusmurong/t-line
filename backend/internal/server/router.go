@@ -6,6 +6,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	authmod "github.com/t-line/backend/internal/modules/auth"
+	bookingmod "github.com/t-line/backend/internal/modules/booking"
+	ordermod "github.com/t-line/backend/internal/modules/order"
+	paymentmod "github.com/t-line/backend/internal/modules/payment"
+	venuemod "github.com/t-line/backend/internal/modules/venue"
 	"github.com/t-line/backend/internal/middleware"
 	"github.com/t-line/backend/internal/pkg/response"
 )
@@ -41,6 +45,11 @@ func (s *Server) setupRoutes() {
 
 	// register module routes
 	s.authHandler.RegisterRoutes(public, authed)
+	s.venueHandler.RegisterRoutes(public, authed, admin)
+	s.orderHandler.RegisterRoutes(authed)
+	s.orderAdminHandler.RegisterRoutes(admin)
+	s.paymentHandler.RegisterRoutes(public, authed)
+	s.bookingHandler.RegisterRoutes(authed)
 
 	// handle 404
 	s.engine.NoRoute(func(c *gin.Context) {
@@ -53,4 +62,31 @@ func (s *Server) initModules() {
 	authRepo := authmod.NewRepository(s.db)
 	authSvc := authmod.NewService(authRepo, s.rdb, s.jwtMgr, s.wechatAuth, s.smsSender)
 	s.authHandler = authmod.NewHandler(authSvc)
+
+	// Venue module
+	venueRepo := venuemod.NewRepository(s.db)
+	venueSvc := venuemod.NewService(venueRepo)
+	s.venueHandler = venuemod.NewHandler(venueSvc)
+
+	// Order module
+	orderRepo := ordermod.NewRepository(s.db)
+	orderSvc := ordermod.NewService(orderRepo)
+	s.orderHandler = ordermod.NewHandler(orderSvc)
+	s.orderAdminHandler = ordermod.NewAdminHandler(orderSvc)
+
+	// Payment module
+	paymentRepo := paymentmod.NewRepository(s.db)
+	// Note: WalletOperator and WechatPayer would be injected from actual implementations
+	// For now, pass nil - they will be set up when the integration modules are ready
+	paymentSvc := paymentmod.NewService(paymentRepo, nil, nil, orderSvc)
+	s.paymentHandler = paymentmod.NewHandler(paymentSvc)
+
+	// Booking module
+	bookingRepo := bookingmod.NewRepository(s.db)
+	bookingSvc := bookingmod.NewService(bookingRepo, s.rdb)
+	bookingSvc.SetVenuePricer(venueSvc)
+	s.bookingHandler = bookingmod.NewHandler(bookingSvc)
+
+	// Wire cross-module dependencies
+	venueSvc.SetBookingChecker(bookingSvc)
 }

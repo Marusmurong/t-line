@@ -15,6 +15,10 @@ import (
 	"github.com/t-line/backend/internal/integration/sms"
 	"github.com/t-line/backend/internal/integration/wechat"
 	authmod "github.com/t-line/backend/internal/modules/auth"
+	bookingmod "github.com/t-line/backend/internal/modules/booking"
+	ordermod "github.com/t-line/backend/internal/modules/order"
+	paymentmod "github.com/t-line/backend/internal/modules/payment"
+	venuemod "github.com/t-line/backend/internal/modules/venue"
 	"github.com/t-line/backend/internal/pkg/jwt"
 	"github.com/t-line/backend/internal/pkg/logger"
 	"github.com/t-line/backend/internal/pkg/validator"
@@ -31,7 +35,12 @@ type Server struct {
 	smsSender  *sms.Sender
 
 	// module handlers
-	authHandler *authmod.Handler
+	authHandler         *authmod.Handler
+	venueHandler        *venuemod.Handler
+	orderHandler        *ordermod.Handler
+	orderAdminHandler   *ordermod.AdminHandler
+	paymentHandler      *paymentmod.Handler
+	bookingHandler      *bookingmod.Handler
 }
 
 func New(cfg *config.Config, db *gorm.DB, rdb *redis.Client) *Server {
