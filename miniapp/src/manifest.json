@@ -1,0 +1,22 @@
+{
+  "name": "T-Line",
+  "appid": "__UNI__TLINE001",
+  "description": "T-Line Sports Club 网球馆预订小程序",
+  "versionName": "1.0.0",
+  "versionCode": "100",
+  "transformPx": false,
+  "mp-weixin": {
+    "appid": "",
+    "setting": {
+      "urlCheck": true,
+      "es6": true,
+      "minified": true
+    },
+    "usingComponents": true,
+    "permission": {
+      "scope.userLocation": {
+        "desc": "获取您的位置以显示附近场馆"
+      }
+    }
+  }
+}

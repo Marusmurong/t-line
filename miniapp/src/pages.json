@@ -1,0 +1,38 @@
+{
+  "pages": [
+    { "path": "pages/home/index", "style": { "navigationBarTitleText": "T-Line", "navigationStyle": "custom" } },
+    { "path": "pages/booking/index", "style": { "navigationBarTitleText": "场地预订" } },
+    { "path": "pages/booking/confirm", "style": { "navigationBarTitleText": "确认预订" } },
+    { "path": "pages/activity/index", "style": { "navigationBarTitleText": "活动" } },
+    { "path": "pages/activity/detail", "style": { "navigationBarTitleText": "活动详情" } },
+    { "path": "pages/shop/index", "style": { "navigationBarTitleText": "商城" } },
+    { "path": "pages/shop/detail", "style": { "navigationBarTitleText": "商品详情" } },
+    { "path": "pages/profile/index", "style": { "navigationBarTitleText": "我的", "navigationStyle": "custom" } },
+    { "path": "pages/my-bookings/index", "style": { "navigationBarTitleText": "我的预约" } },
+    { "path": "pages/my-courses/index", "style": { "navigationBarTitleText": "我的课程" } },
+    { "path": "pages/wallet/index", "style": { "navigationBarTitleText": "我的钱包" } },
+    { "path": "pages/orders/index", "style": { "navigationBarTitleText": "我的订单" } },
+    { "path": "pages/orders/detail", "style": { "navigationBarTitleText": "订单详情" } },
+    { "path": "pages/member/index", "style": { "navigationBarTitleText": "会员中心" } },
+    { "path": "pages/settings/index", "style": { "navigationBarTitleText": "设置" } }
+  ],
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#2255CC",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/home/index", "text": "首页", "iconPath": "static/icons/home.png", "selectedIconPath": "static/icons/home-active.png" },
+      { "pagePath": "pages/booking/index", "text": "预订", "iconPath": "static/icons/booking.png", "selectedIconPath": "static/icons/booking-active.png" },
+      { "pagePath": "pages/activity/index", "text": "活动", "iconPath": "static/icons/activity.png", "selectedIconPath": "static/icons/activity-active.png" },
+      { "pagePath": "pages/shop/index", "text": "商城", "iconPath": "static/icons/shop.png", "selectedIconPath": "static/icons/shop-active.png" },
+      { "pagePath": "pages/profile/index", "text": "我的", "iconPath": "static/icons/profile.png", "selectedIconPath": "static/icons/profile-active.png" }
+    ]
+  },
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "T-Line",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "backgroundColor": "#F5F6F8"
+  }
+}
