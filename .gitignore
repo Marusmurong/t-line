@@ -40,3 +40,4 @@ docker-compose.override.yml
 miniapp/unpackage/
 miniapp/dist/
 
+CLAUDE.md
