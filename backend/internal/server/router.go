@@ -13,6 +13,7 @@ import (
 	ordermod "github.com/t-line/backend/internal/modules/order"
 	paymentmod "github.com/t-line/backend/internal/modules/payment"
 	productmod "github.com/t-line/backend/internal/modules/product"
+	statsmod "github.com/t-line/backend/internal/modules/stats"
 	venuemod "github.com/t-line/backend/internal/modules/venue"
 	"github.com/t-line/backend/internal/middleware"
 	"github.com/t-line/backend/internal/pkg/response"
@@ -60,6 +61,7 @@ func (s *Server) setupRoutes() {
 	s.academicHandler.RegisterRoutes(public, authed)
 	s.academicAdminHandler.RegisterRoutes(admin)
 	s.notifyHandler.RegisterRoutes(authed)
+	s.statsHandler.RegisterRoutes(admin)
 
 	// handle 404
 	s.engine.NoRoute(func(c *gin.Context) {
@@ -118,6 +120,11 @@ func (s *Server) initModules() {
 	notifyRepo := notifymod.NewRepository(s.db)
 	notifySvc := notifymod.NewService(notifyRepo)
 	s.notifyHandler = notifymod.NewHandler(notifySvc)
+
+	// Stats module
+	statsRepo := statsmod.NewRepository(s.db)
+	statsSvc := statsmod.NewService(statsRepo)
+	s.statsHandler = statsmod.NewHandler(statsSvc)
 
 	// Wire cross-module dependencies
 	venueSvc.SetBookingChecker(bookingSvc)

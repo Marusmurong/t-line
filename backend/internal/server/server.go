@@ -22,10 +22,12 @@ import (
 	ordermod "github.com/t-line/backend/internal/modules/order"
 	paymentmod "github.com/t-line/backend/internal/modules/payment"
 	productmod "github.com/t-line/backend/internal/modules/product"
+	statsmod "github.com/t-line/backend/internal/modules/stats"
 	venuemod "github.com/t-line/backend/internal/modules/venue"
 	"github.com/t-line/backend/internal/pkg/jwt"
 	"github.com/t-line/backend/internal/pkg/logger"
 	"github.com/t-line/backend/internal/pkg/validator"
+	"github.com/t-line/backend/internal/scheduler"
 	"gorm.io/gorm"
 )
 
@@ -37,6 +39,9 @@ type Server struct {
 	jwtMgr     *jwt.Manager
 	wechatAuth *wechat.AuthClient
 	smsSender  *sms.Sender
+
+	// scheduler
+	scheduler *scheduler.Scheduler
 
 	// module handlers
 	authHandler            *authmod.Handler
@@ -51,6 +56,7 @@ type Server struct {
 	academicHandler        *academicmod.Handler
 	academicAdminHandler   *academicmod.AdminHandler
 	notifyHandler          *notifymod.Handler
+	statsHandler           *statsmod.Handler
 }
 
 func New(cfg *config.Config, db *gorm.DB, rdb *redis.Client) *Server {
@@ -72,6 +78,7 @@ func New(cfg *config.Config, db *gorm.DB, rdb *redis.Client) *Server {
 		jwtMgr:     jwtMgr,
 		wechatAuth: wechatAuth,
 		smsSender:  smsSender,
+		scheduler:  scheduler.New(db, rdb),
 	}
 
 	s.initModules()
@@ -90,6 +97,9 @@ func (s *Server) Run() error {
 		WriteTimeout: 30 * time.Second,
 	}
 
+	// Start scheduler
+	s.scheduler.Start()
+
 	errCh := make(chan error, 1)
 	go func() {
 		logger.L.Infof("server starting on %s", addr)
@@ -105,8 +115,12 @@ func (s *Server) Run() error {
 	case <-quit:
 		logger.L.Info("shutting down server...")
 	case err := <-errCh:
+		s.scheduler.Stop()
 		return err
 	}
+
+	// Stop scheduler gracefully
+	s.scheduler.Stop()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
