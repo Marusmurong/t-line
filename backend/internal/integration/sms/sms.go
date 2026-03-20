@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
+	"os"
 	"time"
 
 	"github.com/redis/go-redis/v9"
+	"github.com/t-line/backend/internal/pkg/logger"
 )
 
 const (
@@ -50,8 +52,10 @@ func (s *Sender) SendCode(phone string) error {
 	s.rdb.Set(ctx, coolKey, "1", codeCooldown)
 
 	// TODO: call actual SMS provider to send code
-	// For development, log the code
-	fmt.Printf("[SMS] code for %s: %s\n", phone, code)
+	// Only log masked phone in debug mode; never log the code in production
+	if os.Getenv("APP_MODE") == "debug" {
+		logger.L.Debugf("[SMS] code sent to %s***%s", phone[:3], phone[len(phone)-4:])
+	}
 
 	return nil
 }

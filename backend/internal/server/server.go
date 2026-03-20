@@ -38,6 +38,7 @@ type Server struct {
 	engine     *gin.Engine
 	jwtMgr     *jwt.Manager
 	wechatAuth *wechat.AuthClient
+	wechatPay  *wechat.PayClient
 	smsSender  *sms.Sender
 
 	// scheduler
@@ -68,6 +69,7 @@ func New(cfg *config.Config, db *gorm.DB, rdb *redis.Client) *Server {
 
 	jwtMgr := jwt.NewManager(cfg.JWT.Secret, cfg.JWT.AccessExpireMin, cfg.JWT.RefreshExpireD)
 	wechatAuth := wechat.NewAuthClient(cfg.WeChat.AppID, cfg.WeChat.AppSecret)
+	wechatPay := wechat.NewPayClient(cfg.WeChat.MchID, cfg.WeChat.MchAPIKey, cfg.WeChat.NotifyURL)
 	smsSender := sms.NewSender(rdb, cfg.SMS.Provider)
 
 	s := &Server{
@@ -77,6 +79,7 @@ func New(cfg *config.Config, db *gorm.DB, rdb *redis.Client) *Server {
 		engine:     gin.New(),
 		jwtMgr:     jwtMgr,
 		wechatAuth: wechatAuth,
+		wechatPay:  wechatPay,
 		smsSender:  smsSender,
 		scheduler:  scheduler.New(db, rdb),
 	}

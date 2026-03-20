@@ -46,6 +46,27 @@ func (s *Service) GetProduct(ctx context.Context, id int64) (*ProductResp, error
 	return &resp, nil
 }
 
+// GetProductNameAndPrice returns the product name and price, using SKU price if skuID is provided.
+func (s *Service) GetProductNameAndPrice(ctx context.Context, productID int64, skuID *int64) (string, decimal.Decimal, error) {
+	p, err := s.repo.GetByID(ctx, productID)
+	if err != nil {
+		return "", decimal.Zero, apperrors.ErrProductNotFound
+	}
+
+	if skuID != nil {
+		sku, err := s.repo.GetSKUByID(ctx, *skuID)
+		if err != nil {
+			return "", decimal.Zero, apperrors.New(40001, "SKU不存在")
+		}
+		if sku.ProductID != productID {
+			return "", decimal.Zero, apperrors.New(40001, "SKU不属于该商品")
+		}
+		return p.Name + " - " + sku.Name, sku.Price, nil
+	}
+
+	return p.Name, p.Price, nil
+}
+
 // --- Admin ---
 
 func (s *Service) AdminListProducts(ctx context.Context, category *string, status *int, offset, limit int) ([]ProductResp, int64, error) {

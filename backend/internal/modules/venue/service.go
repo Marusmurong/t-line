@@ -102,6 +102,15 @@ func (s *Service) GetAvailability(ctx context.Context, venueID int64, date time.
 	return slots, nil
 }
 
+// GetVenueName returns the venue name by ID.
+func (s *Service) GetVenueName(ctx context.Context, venueID int64) (string, error) {
+	v, err := s.repo.GetByID(ctx, venueID)
+	if err != nil {
+		return "", apperrors.ErrRecordNotFound
+	}
+	return v.Name, nil
+}
+
 // --- Admin ---
 
 func (s *Service) AdminListVenues(ctx context.Context, status *int, offset, limit int) ([]VenueResp, int64, error) {

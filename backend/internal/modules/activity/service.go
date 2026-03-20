@@ -107,6 +107,15 @@ func (s *Service) CancelRegistration(ctx context.Context, activityID, userID int
 	return nil
 }
 
+// GetActivityNameAndPrice returns the activity title and price.
+func (s *Service) GetActivityNameAndPrice(ctx context.Context, activityID int64) (string, decimal.Decimal, error) {
+	a, err := s.repo.GetByID(ctx, activityID)
+	if err != nil {
+		return "", decimal.Zero, apperrors.ErrActivityNotFound
+	}
+	return a.Title, a.Price, nil
+}
+
 // --- Admin ---
 
 func (s *Service) AdminListActivities(ctx context.Context, actType, status *string, offset, limit int) ([]ActivityResp, int64, error) {

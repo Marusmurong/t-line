@@ -37,6 +37,13 @@ func JWTAuth(jwtMgr *jwt.Manager) gin.HandlerFunc {
 			return
 		}
 
+		// Only accept access tokens for API requests
+		if claims.TokenType != jwt.TokenTypeAccess {
+			response.Unauthorized(c, "无效的令牌类型")
+			c.Abort()
+			return
+		}
+
 		c.Set(CtxUserID, claims.UserID)
 		c.Set(CtxUserRole, claims.Role)
 		c.Set(CtxMemberLevel, claims.MemberLevel)

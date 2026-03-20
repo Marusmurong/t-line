@@ -5,10 +5,8 @@ import "time"
 // --- Request DTOs ---
 
 type PreparePayReq struct {
-	OrderID      int64  `json:"order_id" binding:"required"`
-	Method       string `json:"method" binding:"required,oneof=balance wechat combo"`
-	CouponID     *int64 `json:"coupon_id"`
-	BalanceAmount string `json:"balance_amount"` // only for combo pay
+	OrderID  int64  `json:"order_id" binding:"required"`
+	CouponID *int64 `json:"coupon_id"`
 }
 
 type WechatCallbackReq struct {

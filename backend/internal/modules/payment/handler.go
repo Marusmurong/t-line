@@ -1,18 +1,28 @@
 package payment
 
 import (
+	"encoding/json"
+	"io"
+
 	"github.com/gin-gonic/gin"
 	"github.com/t-line/backend/internal/middleware"
 	apperrors "github.com/t-line/backend/internal/pkg/errors"
+	"github.com/t-line/backend/internal/pkg/logger"
 	"github.com/t-line/backend/internal/pkg/response"
 )
 
-type Handler struct {
-	svc *Service
+// CallbackVerifier verifies wechat pay callback signatures.
+type CallbackVerifier interface {
+	VerifyCallback(body []byte, signature string) error
 }
 
-func NewHandler(svc *Service) *Handler {
-	return &Handler{svc: svc}
+type Handler struct {
+	svc              *Service
+	callbackVerifier CallbackVerifier
+}
+
+func NewHandler(svc *Service, callbackVerifier CallbackVerifier) *Handler {
+	return &Handler{svc: svc, callbackVerifier: callbackVerifier}
 }
 
 func (h *Handler) PreparePayment(c *gin.Context) {
@@ -38,8 +48,27 @@ func (h *Handler) PreparePayment(c *gin.Context) {
 }
 
 func (h *Handler) WechatCallback(c *gin.Context) {
+	// Read raw body for signature verification
+	rawBody, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		logger.L.Errorw("wechat callback: failed to read body", "error", err)
+		response.ServerError(c, "读取请求体失败")
+		return
+	}
+
+	// Verify callback signature
+	signature := c.GetHeader("Wechatpay-Signature")
+	if h.callbackVerifier != nil {
+		if err := h.callbackVerifier.VerifyCallback(rawBody, signature); err != nil {
+			logger.L.Errorw("wechat callback: signature verification failed", "error", err)
+			response.Unauthorized(c, "回调签名验证失败")
+			return
+		}
+	}
+
+	// Parse callback data from raw body (body stream already consumed)
 	var req WechatCallbackReq
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := json.Unmarshal(rawBody, &req); err != nil {
 		response.BadRequest(c, apperrors.ErrInvalidParams.Code, err.Error())
 		return
 	}

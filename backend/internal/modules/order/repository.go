@@ -108,7 +108,7 @@ func (r *Repository) UpdateStatus(ctx context.Context, orderID int64, fromStatus
 
 func (r *Repository) UpdateOrderPaid(ctx context.Context, orderID int64, balancePaid, wechatPaid interface{}) error {
 	now := time.Now()
-	return r.db.WithContext(ctx).
+	result := r.db.WithContext(ctx).
 		Model(&Order{}).
 		Where("id = ? AND status = ?", orderID, StatusPending).
 		Updates(map[string]interface{}{
@@ -117,7 +117,14 @@ func (r *Repository) UpdateOrderPaid(ctx context.Context, orderID int64, balance
 			"wechat_paid":  wechatPaid,
 			"paid_at":      &now,
 			"updated_at":   now,
-		}).Error
+		})
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return fmt.Errorf("订单支付状态更新失败: 订单可能已被处理")
+	}
+	return nil
 }
 
 // Refund operations

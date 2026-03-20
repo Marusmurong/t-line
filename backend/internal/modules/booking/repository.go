@@ -61,6 +61,19 @@ func (r *Repository) Update(ctx context.Context, b *Booking) error {
 	return r.db.WithContext(ctx).Save(b).Error
 }
 
+func (r *Repository) Delete(ctx context.Context, id int64) error {
+	return r.db.WithContext(ctx).Delete(&Booking{}, id).Error
+}
+
+// GetByOrderID finds a booking by its associated order ID.
+func (r *Repository) GetByOrderID(ctx context.Context, orderID int64) (*Booking, error) {
+	var b Booking
+	if err := r.db.WithContext(ctx).Where("order_id = ?", orderID).First(&b).Error; err != nil {
+		return nil, err
+	}
+	return &b, nil
+}
+
 func (r *Repository) IsSlotBooked(ctx context.Context, venueID int64, date time.Time, startTime, endTime string) (bool, error) {
 	var count int64
 	err := r.db.WithContext(ctx).

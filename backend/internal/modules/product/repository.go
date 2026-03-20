@@ -67,6 +67,14 @@ func (r *Repository) ListSKUs(ctx context.Context, productID int64) ([]ProductSK
 	return skus, err
 }
 
+func (r *Repository) GetSKUByID(ctx context.Context, id int64) (*ProductSKU, error) {
+	var sku ProductSKU
+	if err := r.db.WithContext(ctx).First(&sku, id).Error; err != nil {
+		return nil, err
+	}
+	return &sku, nil
+}
+
 func (r *Repository) CreateSKU(ctx context.Context, sku *ProductSKU) error {
 	return r.db.WithContext(ctx).Create(sku).Error
 }

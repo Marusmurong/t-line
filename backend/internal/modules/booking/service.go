@@ -12,12 +12,17 @@ import (
 
 const (
 	slotLockPrefix = "booking:lock:"
-	slotLockTTL    = 10 * time.Minute
+	slotLockTTL    = 35 * time.Minute // Slightly longer than order expiry (30 min) to prevent race
 )
 
 // VenuePricer abstracts venue price lookup.
 type VenuePricer interface {
 	GetTimeSlotPrice(ctx context.Context, venueID int64, date time.Time, startTime, endTime string) (decimal.Decimal, error)
+}
+
+// VenueNameResolver abstracts venue name lookup.
+type VenueNameResolver interface {
+	GetVenueName(ctx context.Context, venueID int64) (string, error)
 }
 
 // OrderCreator abstracts order creation from order module.
@@ -26,10 +31,11 @@ type OrderCreator interface {
 }
 
 type Service struct {
-	repo         *Repository
-	rdb          *redis.Client
-	venuePricer  VenuePricer
-	orderCreator OrderCreator
+	repo              *Repository
+	rdb               *redis.Client
+	venuePricer       VenuePricer
+	venueNameResolver VenueNameResolver
+	orderCreator      OrderCreator
 }
 
 func NewService(repo *Repository, rdb *redis.Client) *Service {
@@ -43,11 +49,15 @@ func (s *Service) SetVenuePricer(vp VenuePricer) {
 	s.venuePricer = vp
 }
 
+func (s *Service) SetVenueNameResolver(vnr VenueNameResolver) {
+	s.venueNameResolver = vnr
+}
+
 func (s *Service) SetOrderCreator(oc OrderCreator) {
 	s.orderCreator = oc
 }
 
-// CreateBooking: check slot -> Redis SETNX lock -> create booking -> create order
+// CreateBooking: check slot -> Redis SETNX lock -> create booking -> create order -> write back order_id
 func (s *Service) CreateBooking(ctx context.Context, userID int64, req CreateBookingReq) (*BookingResp, error) {
 	date, err := time.Parse("2006-01-02", req.Date)
 	if err != nil {
@@ -100,6 +110,31 @@ func (s *Service) CreateBooking(ctx context.Context, userID int64, req CreateBoo
 	if err := s.repo.Create(ctx, booking); err != nil {
 		_ = s.rdb.Del(ctx, lockKey)
 		return nil, apperrors.ErrInternal
+	}
+
+	// Create associated order so payment can be tracked
+	if s.orderCreator != nil {
+		venueName := "场地预约"
+		if s.venueNameResolver != nil {
+			if name, vnErr := s.venueNameResolver.GetVenueName(ctx, req.VenueID); vnErr == nil {
+				venueName = name
+			}
+		}
+
+		orderID, oErr := s.orderCreator.CreateOrderForBooking(
+			ctx, userID, booking.ID, venueName,
+			req.Date, req.StartTime, req.EndTime, totalAmount,
+		)
+		if oErr != nil {
+			// Rollback: delete booking and release lock
+			_ = s.repo.Delete(ctx, booking.ID)
+			_ = s.rdb.Del(ctx, lockKey)
+			return nil, apperrors.ErrInternal
+		}
+
+		// Write order_id back to booking
+		booking.OrderID = &orderID
+		_ = s.repo.Update(ctx, booking)
 	}
 
 	resp := ToBookingResp(booking)
@@ -177,6 +212,12 @@ func (s *Service) ListBookings(ctx context.Context, userID int64, upcoming bool,
 // IsSlotBooked implements venue.BookingChecker interface.
 func (s *Service) IsSlotBooked(ctx context.Context, venueID int64, date time.Time, startTime, endTime string) (bool, error) {
 	return s.repo.IsSlotBooked(ctx, venueID, date, startTime, endTime)
+}
+
+// ReleaseSlotLock releases the Redis lock for a booking slot (used by scheduler on order expiry).
+func (s *Service) ReleaseSlotLock(ctx context.Context, venueID int64, date, startTime, endTime string) {
+	lockKey := fmt.Sprintf("%s%d:%s:%s:%s", slotLockPrefix, venueID, date, startTime, endTime)
+	_ = s.rdb.Del(ctx, lockKey)
 }
 
 // notifyFirstWaitlisted notifies the first waiting user when a slot becomes available.

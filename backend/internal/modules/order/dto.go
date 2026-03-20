@@ -11,12 +11,10 @@ type CreateOrderReq struct {
 }
 
 type CreateItemReq struct {
-	ItemType  string `json:"item_type" binding:"required"`
-	ItemID    int64  `json:"item_id" binding:"required"`
-	ItemName  string `json:"item_name" binding:"required,max=128"`
-	SkuID     *int64 `json:"sku_id"`
-	Quantity  int    `json:"quantity" binding:"required,min=1"`
-	UnitPrice string `json:"unit_price" binding:"required"`
+	ItemType string `json:"item_type" binding:"required"`
+	ItemID   int64  `json:"item_id" binding:"required"`
+	SkuID    *int64 `json:"sku_id"`
+	Quantity int    `json:"quantity" binding:"required,min=1"`
 }
 
 type CancelOrderReq struct {

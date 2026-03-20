@@ -7,10 +7,17 @@ import (
 	jwtgo "github.com/golang-jwt/jwt/v5"
 )
 
+// Token type constants
+const (
+	TokenTypeAccess  = "access"
+	TokenTypeRefresh = "refresh"
+)
+
 type Claims struct {
 	UserID      int64  `json:"user_id"`
 	Role        string `json:"role"`
 	MemberLevel int    `json:"member_level"`
+	TokenType   string `json:"token_type"`
 	jwtgo.RegisteredClaims
 }
 
@@ -41,6 +48,7 @@ func (m *Manager) GenerateTokenPair(userID int64, role string, memberLevel int) 
 		UserID:      userID,
 		Role:        role,
 		MemberLevel: memberLevel,
+		TokenType:   TokenTypeAccess,
 		RegisteredClaims: jwtgo.RegisteredClaims{
 			ExpiresAt: jwtgo.NewNumericDate(now.Add(time.Duration(m.accessExpireMin) * time.Minute)),
 			IssuedAt:  jwtgo.NewNumericDate(now),
@@ -53,7 +61,8 @@ func (m *Manager) GenerateTokenPair(userID int64, role string, memberLevel int) 
 	}
 
 	refreshClaims := Claims{
-		UserID: userID,
+		UserID:    userID,
+		TokenType: TokenTypeRefresh,
 		RegisteredClaims: jwtgo.RegisteredClaims{
 			ExpiresAt: jwtgo.NewNumericDate(now.Add(time.Duration(m.refreshExpireD) * 24 * time.Hour)),
 			IssuedAt:  jwtgo.NewNumericDate(now),

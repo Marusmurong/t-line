@@ -80,25 +80,6 @@ func (s *Server) initModules() {
 	venueSvc := venuemod.NewService(venueRepo)
 	s.venueHandler = venuemod.NewHandler(venueSvc)
 
-	// Order module
-	orderRepo := ordermod.NewRepository(s.db)
-	orderSvc := ordermod.NewService(orderRepo)
-	s.orderHandler = ordermod.NewHandler(orderSvc)
-	s.orderAdminHandler = ordermod.NewAdminHandler(orderSvc)
-
-	// Payment module
-	paymentRepo := paymentmod.NewRepository(s.db)
-	// Note: WalletOperator and WechatPayer would be injected from actual implementations
-	// For now, pass nil - they will be set up when the integration modules are ready
-	paymentSvc := paymentmod.NewService(paymentRepo, nil, nil, orderSvc)
-	s.paymentHandler = paymentmod.NewHandler(paymentSvc)
-
-	// Booking module
-	bookingRepo := bookingmod.NewRepository(s.db)
-	bookingSvc := bookingmod.NewService(bookingRepo, s.rdb)
-	bookingSvc.SetVenuePricer(venueSvc)
-	s.bookingHandler = bookingmod.NewHandler(bookingSvc)
-
 	// Product module
 	productRepo := productmod.NewRepository(s.db)
 	productSvc := productmod.NewService(productRepo)
@@ -109,6 +90,29 @@ func (s *Server) initModules() {
 	activitySvc := activitymod.NewService(activityRepo)
 	s.activityHandler = activitymod.NewHandler(activitySvc)
 	s.activityAdminHandler = activitymod.NewAdminHandler(activitySvc)
+
+	// Order module (with PriceResolver that delegates to venue/product/activity)
+	orderRepo := ordermod.NewRepository(s.db)
+	priceResolver := ordermod.NewCompositePriceResolver(productSvc, activitySvc)
+	orderSvc := ordermod.NewService(orderRepo, priceResolver)
+	s.orderHandler = ordermod.NewHandler(orderSvc)
+	s.orderAdminHandler = ordermod.NewAdminHandler(orderSvc)
+
+	// Payment module (with real wallet and wechat pay dependencies)
+	paymentRepo := paymentmod.NewRepository(s.db)
+	walletOp := newWalletAdapter(authRepo)
+	wechatPayOp := newWechatPayAdapter(s.wechatPay)
+	orderQuerier := newOrderQuerierAdapter(orderSvc)
+	paymentSvc := paymentmod.NewService(paymentRepo, walletOp, wechatPayOp, orderSvc, orderQuerier)
+	s.paymentHandler = paymentmod.NewHandler(paymentSvc, s.wechatPay)
+
+	// Booking module (with order creator for creating orders on booking)
+	bookingRepo := bookingmod.NewRepository(s.db)
+	bookingSvc := bookingmod.NewService(bookingRepo, s.rdb)
+	bookingSvc.SetVenuePricer(venueSvc)
+	bookingSvc.SetVenueNameResolver(venueSvc)
+	bookingSvc.SetOrderCreator(newBookingOrderCreator(orderSvc))
+	s.bookingHandler = bookingmod.NewHandler(bookingSvc)
 
 	// Academic module
 	academicRepo := academicmod.NewRepository(s.db)

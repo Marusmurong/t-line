@@ -9,22 +9,39 @@ import (
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 	apperrors "github.com/t-line/backend/internal/pkg/errors"
+	"github.com/t-line/backend/internal/pkg/logger"
 	"gorm.io/gorm"
 )
+
+// OrderQuerier abstracts reading order data (to avoid importing order module).
+type OrderQuerier interface {
+	GetOrderByID(ctx context.Context, orderID int64) (OrderInfo, error)
+}
+
+// OrderInfo is a minimal view of an order used by the payment module.
+type OrderInfo struct {
+	ID        int64
+	UserID    int64
+	Status    string
+	PayAmount decimal.Decimal
+	Type      string
+}
 
 type Service struct {
 	repo         *Repository
 	wallet       WalletOperator
 	wechat       WechatPayer
 	orderUpdater OrderUpdater
+	orderQuerier OrderQuerier
 }
 
-func NewService(repo *Repository, wallet WalletOperator, wechat WechatPayer, orderUpdater OrderUpdater) *Service {
+func NewService(repo *Repository, wallet WalletOperator, wechat WechatPayer, orderUpdater OrderUpdater, orderQuerier OrderQuerier) *Service {
 	return &Service{
 		repo:         repo,
 		wallet:       wallet,
 		wechat:       wechat,
 		orderUpdater: orderUpdater,
+		orderQuerier: orderQuerier,
 	}
 }
 
@@ -33,58 +50,63 @@ func GeneratePaymentNo() string {
 	return "PAY" + time.Now().Format("20060102150405") + uuid.New().String()[:8]
 }
 
-// PreparePayment handles pre-payment: calculates amounts, picks method, creates payment record.
+// PreparePayment handles pre-payment: verifies order ownership, calculates amounts from server-side data.
 func (s *Service) PreparePayment(ctx context.Context, userID int64, req PreparePayReq, openID string) (*PreparePayResp, error) {
-	// Get order info (via order updater - but we need amount from order)
-	// For now, we'll compute from the payment request
-	paymentNo := GeneratePaymentNo()
+	// 1. Query order from backend — never trust client amount
+	orderInfo, err := s.orderQuerier.GetOrderByID(ctx, req.OrderID)
+	if err != nil {
+		return nil, apperrors.ErrRecordNotFound
+	}
 
-	// Calculate amounts based on method
-	var balanceAmount, wechatAmount, totalAmount decimal.Decimal
+	// 2. Verify order belongs to current user
+	if orderInfo.UserID != userID {
+		return nil, apperrors.ErrForbidden
+	}
 
-	// We need the order amount - get from the existing payment or order
-	// The handler will pass the order amount
-	totalAmount, _ = decimal.NewFromString(req.BalanceAmount)
-	if totalAmount.IsZero() {
+	// 3. Verify order is pending
+	if orderInfo.Status != "pending" {
+		return nil, apperrors.New(40001, "订单状态不允许支付")
+	}
+
+	totalAmount := orderInfo.PayAmount
+	if totalAmount.LessThanOrEqual(decimal.Zero) {
 		return nil, apperrors.ErrInvalidParams
 	}
 
-	switch req.Method {
-	case MethodBalance:
-		balance, err := s.wallet.GetBalance(ctx, userID)
-		if err != nil {
-			return nil, apperrors.ErrInternal
-		}
-		if balance.LessThan(totalAmount) {
-			return nil, apperrors.ErrInsufficientBalance
-		}
-		balanceAmount = totalAmount
-		wechatAmount = decimal.Zero
+	paymentNo := GeneratePaymentNo()
 
-	case MethodWechat:
-		balanceAmount = decimal.Zero
-		wechatAmount = totalAmount
-
-	case MethodCombo:
-		balance, err := s.wallet.GetBalance(ctx, userID)
-		if err != nil {
-			return nil, apperrors.ErrInternal
-		}
-		if balance.GreaterThanOrEqual(totalAmount) {
-			balanceAmount = totalAmount
-			wechatAmount = decimal.Zero
-		} else {
-			balanceAmount = balance
-			wechatAmount = totalAmount.Sub(balance)
-		}
+	// 4. Query wallet balance to decide payment method automatically
+	balance, err := s.wallet.GetBalance(ctx, userID)
+	if err != nil {
+		return nil, apperrors.ErrInternal
 	}
 
-	// Create payment record
+	var balanceAmount, wechatAmount decimal.Decimal
+	var method string
+
+	if balance.GreaterThanOrEqual(totalAmount) {
+		// Pure balance payment
+		method = MethodBalance
+		balanceAmount = totalAmount
+		wechatAmount = decimal.Zero
+	} else if balance.GreaterThan(decimal.Zero) {
+		// Combo payment
+		method = MethodCombo
+		balanceAmount = balance
+		wechatAmount = totalAmount.Sub(balance)
+	} else {
+		// Pure wechat payment
+		method = MethodWechat
+		balanceAmount = decimal.Zero
+		wechatAmount = totalAmount
+	}
+
+	// 5. Create payment record
 	payment := &Payment{
 		PaymentNo:     paymentNo,
 		OrderID:       req.OrderID,
 		UserID:        userID,
-		Method:        req.Method,
+		Method:        method,
 		Amount:        totalAmount,
 		BalanceAmount: balanceAmount,
 		WechatAmount:  wechatAmount,
@@ -97,7 +119,7 @@ func (s *Service) PreparePayment(ctx context.Context, userID int64, req PrepareP
 
 	resp := &PreparePayResp{
 		PaymentNo:     paymentNo,
-		Method:        req.Method,
+		Method:        method,
 		TotalAmount:   totalAmount.StringFixed(2),
 		BalanceAmount: balanceAmount.StringFixed(2),
 		WechatAmount:  wechatAmount.StringFixed(2),
@@ -126,7 +148,7 @@ func (s *Service) PreparePayment(ctx context.Context, userID int64, req PrepareP
 	return resp, nil
 }
 
-// HandleWechatCallback processes wechat payment callback (idempotent).
+// HandleWechatCallback processes wechat payment callback with signature verification and amount check.
 func (s *Service) HandleWechatCallback(ctx context.Context, req WechatCallbackReq) error {
 	payment, err := s.repo.GetPaymentByNo(ctx, req.OutTradeNo)
 	if err != nil {
@@ -139,6 +161,17 @@ func (s *Service) HandleWechatCallback(ctx context.Context, req WechatCallbackRe
 	// Idempotent check: already processed
 	if payment.Status == PayStatusSuccess {
 		return nil
+	}
+
+	// Verify callback amount matches payment record (amount in cents)
+	expectedCents := payment.WechatAmount.Mul(decimal.NewFromInt(100)).IntPart()
+	if req.Amount != expectedCents {
+		logger.L.Errorw("wechat callback amount mismatch",
+			"payment_no", payment.PaymentNo,
+			"expected_cents", expectedCents,
+			"actual_cents", req.Amount,
+		)
+		return apperrors.New(40001, "回调金额与订单不匹配")
 	}
 
 	if req.TradeState != "SUCCESS" {

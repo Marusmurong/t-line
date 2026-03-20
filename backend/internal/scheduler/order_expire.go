@@ -2,10 +2,13 @@ package scheduler
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/t-line/backend/internal/pkg/logger"
 )
+
+const slotLockPrefix = "booking:lock:"
 
 // expireUnpaidOrders closes orders that have exceeded their payment deadline,
 // releases associated booking slots and product stock.
@@ -76,12 +79,39 @@ func (s *Scheduler) cancelExpiredOrder(ctx context.Context, orderID int64) {
 	// Release resources based on order type
 	switch orderType {
 	case "booking":
-		// Cancel associated booking
+		// Cancel associated booking and release Redis slot lock
 		tx.Exec(`
 			UPDATE bookings
 			SET status = 'cancelled', cancel_reason = '支付超时自动取消', cancelled_at = NOW(), updated_at = NOW()
 			WHERE order_id = ? AND status IN ('pending', 'confirmed')
 		`, orderID)
+
+		// Query booking details to release Redis lock
+		type bookingSlot struct {
+			VenueID   int64     `gorm:"column:venue_id"`
+			Date      time.Time `gorm:"column:date"`
+			StartTime string    `gorm:"column:start_time"`
+			EndTime   string    `gorm:"column:end_time"`
+		}
+		var slots []bookingSlot
+		tx.Raw(`
+			SELECT venue_id, date, start_time, end_time
+			FROM bookings WHERE order_id = ?
+		`, orderID).Scan(&slots)
+
+		// Release Redis locks after commit (deferred below)
+		if err := tx.Commit().Error; err != nil {
+			logger.L.Errorw("scheduler: failed to commit order cancellation", "order_id", orderID, "error", err)
+			return
+		}
+
+		// Release Redis slot locks outside the DB transaction
+		for _, slot := range slots {
+			lockKey := fmt.Sprintf("%s%d:%s:%s:%s", slotLockPrefix,
+				slot.VenueID, slot.Date.Format("2006-01-02"), slot.StartTime, slot.EndTime)
+			_ = s.rdb.Del(ctx, lockKey)
+		}
+		return // Already committed
 
 	case "product":
 		// Restore product stock

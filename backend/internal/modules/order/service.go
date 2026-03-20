@@ -8,12 +8,18 @@ import (
 	apperrors "github.com/t-line/backend/internal/pkg/errors"
 )
 
-type Service struct {
-	repo *Repository
+// PriceResolver resolves item name and unit price from backend data sources.
+type PriceResolver interface {
+	ResolvePrice(ctx context.Context, itemType string, itemID int64, skuID *int64) (name string, unitPrice decimal.Decimal, err error)
 }
 
-func NewService(repo *Repository) *Service {
-	return &Service{repo: repo}
+type Service struct {
+	repo          *Repository
+	priceResolver PriceResolver
+}
+
+func NewService(repo *Repository, priceResolver PriceResolver) *Service {
+	return &Service{repo: repo, priceResolver: priceResolver}
 }
 
 func (s *Service) CreateOrder(ctx context.Context, userID int64, req CreateOrderReq) (*OrderResp, error) {
@@ -21,17 +27,19 @@ func (s *Service) CreateOrder(ctx context.Context, userID int64, req CreateOrder
 	items := make([]OrderItem, 0, len(req.Items))
 
 	for _, item := range req.Items {
-		unitPrice, err := decimal.NewFromString(item.UnitPrice)
+		// Resolve price from backend — never trust client
+		name, unitPrice, err := s.priceResolver.ResolvePrice(ctx, item.ItemType, item.ItemID, item.SkuID)
 		if err != nil {
-			return nil, apperrors.ErrInvalidParams
+			return nil, err
 		}
+
 		itemTotal := unitPrice.Mul(decimal.NewFromInt(int64(item.Quantity)))
 		totalAmount = totalAmount.Add(itemTotal)
 
 		items = append(items, OrderItem{
 			ItemType:   item.ItemType,
 			ItemID:     item.ItemID,
-			ItemName:   item.ItemName,
+			ItemName:   name,
 			SkuID:      item.SkuID,
 			Quantity:   item.Quantity,
 			UnitPrice:  unitPrice,

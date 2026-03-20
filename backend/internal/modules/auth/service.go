@@ -120,6 +120,11 @@ func (s *Service) RefreshToken(ctx context.Context, refreshToken string) (*jwt.T
 		return nil, apperrors.ErrTokenExpired
 	}
 
+	// Only accept refresh tokens for token refresh
+	if claims.TokenType != jwt.TokenTypeRefresh {
+		return nil, apperrors.ErrUnauthorized
+	}
+
 	user, err := s.repo.GetUserByID(ctx, claims.UserID)
 	if err != nil {
 		return nil, apperrors.ErrUnauthorized

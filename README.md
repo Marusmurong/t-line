@@ -27,7 +27,7 @@
 ### 用户端 (微信小程序)
 
 <div align="center">
-<img src="docs/preview-banner.png" alt="小程序预览" width="100%" />
+<img src="docs/preview-banner.svg" alt="小程序预览" width="100%" />
 </div>
 
 > 💡 完整交互稿：浏览器打开 `docs/visual-design-user.html`
@@ -35,7 +35,7 @@
 ### 管理后台
 
 <div align="center">
-<img src="docs/preview-admin.png" alt="管理后台预览" width="100%" />
+<img src="docs/preview-admin.svg" alt="管理后台预览" width="100%" />
 </div>
 
 > 💡 完整交互稿：浏览器打开 `docs/visual-design-admin.html`
