@@ -1,9 +1,11 @@
-# IDE
+# IDE & local tools
 .idea/
 .vscode/
 *.swp
 *.swo
 .DS_Store
+.claude/
+.workflow/
 
 # Go
 backend/bin/
@@ -38,6 +40,3 @@ docker-compose.override.yml
 miniapp/unpackage/
 miniapp/dist/
 
-# Workflow runtime
-.workflow/active/*
-!.workflow/active/.gitkeep
