@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" width="1200" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1A1F36"/>
+      <stop offset="100%" stop-color="#2255CC"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="500" fill="url(#bgGrad)"/>
+
+  <!-- Left Section: Branding -->
+  <text x="80" y="160" font-family="-apple-system, PingFang SC, Microsoft YaHei, sans-serif" font-size="60" font-weight="bold" fill="#FFFFFF" letter-spacing="4">T-LINE</text>
+  <text x="84" y="195" font-family="-apple-system, PingFang SC, Microsoft YaHei, sans-serif" font-size="24" fill="#FFFFFF">SPORTS CLUB</text>
+  <text x="84" y="240" font-family="-apple-system, PingFang SC, Microsoft YaHei, sans-serif" font-size="20" fill="rgba(255,255,255,0.8)">网球馆智能管理系统</text>
+
+  <!-- Tech Tags -->
+  <g transform="translate(84, 270)">
+    <rect x="0" y="0" width="40" height="26" rx="6" fill="none" stroke="#FFFFFF" stroke-width="1"/>
+    <text x="20" y="17" font-family="-apple-system, PingFang SC, Microsoft YaHei, sans-serif" font-size="12" fill="#FFFFFF" text-anchor="middle">Go</text>
+
+    <rect x="52" y="0" width="52" height="26" rx="6" fill="none" stroke="#FFFFFF" stroke-width="1"/>
+    <text x="78" y="17" font-family="-apple-system, PingFang SC, Microsoft YaHei, sans-serif" font-size="12" fill="#FFFFFF" text-anchor="middle">Vue3</text>
+
+    <rect x="116" y="0" width="86" height="26" rx="6" fill="none" stroke="#FFFFFF" stroke-width="1"/>
+    <text x="159" y="17" font-family="-apple-system, PingFang SC, Microsoft YaHei, sans-serif" font-size="12" fill="#FFFFFF" text-anchor="middle">PostgreSQL</text>
+
+    <rect x="214" y="0" width="56" height="26" rx="6" fill="none" stroke="#FFFFFF" stroke-width="1"/>
+    <text x="242" y="17" font-family="-apple-system, PingFang SC, Microsoft YaHei, sans-serif" font-size="12" fill="#FFFFFF" text-anchor="middle">Redis</text>
+  </g>
+
+  <!-- Tennis Ball (top-right) -->
+  <circle cx="1120" cy="60" r="40" fill="#C8E632"/>
+  <path d="M1100 35 Q1120 60 1100 85" fill="none" stroke="#A0B828" stroke-width="2.5"/>
+  <path d="M1140 35 Q1120 60 1140 85" fill="none" stroke="#A0B828" stroke-width="2.5"/>
+
+  <!-- Phone 1: Home (left, slightly lower) -->
+  <g transform="translate(560, 110)">
+    <rect x="0" y="0" width="120" height="240" rx="16" fill="#FFFFFF"/>
+    <!-- Status bar -->
+    <rect x="8" y="8" width="104" height="28" rx="8" fill="#3B82F6"/>
+    <text x="60" y="27" font-family="-apple-system, PingFang SC, Microsoft YaHei, sans-serif" font-size="10" fill="#FFFFFF" text-anchor="middle">T-Line</text>
+    <!-- 2x2 Grid entries -->
+    <rect x="14" y="48" width="42" height="42" rx="8" fill="#EEF2FF"/>
+    <rect x="64" y="48" width="42" height="42" rx="8" fill="#F0FDF4"/>
+    <rect x="14" y="98" width="42" height="42" rx="8" fill="#FFF7ED"/>
+    <rect x="64" y="98" width="42" height="42" rx="8" fill="#FDF2F8"/>
+    <!-- Entry icons (small colored circles) -->
+    <circle cx="35" cy="65" r="8" fill="#6366F1"/>
+    <circle cx="85" cy="65" r="8" fill="#22C55E"/>
+    <circle cx="35" cy="115" r="8" fill="#F59E0B"/>
+    <circle cx="85" cy="115" r="8" fill="#EC4899"/>
+    <!-- Data bars -->
+    <rect x="14" y="155" width="92" height="14" rx="4" fill="#34D399"/>
+    <rect x="14" y="175" width="68" height="14" rx="4" fill="#FBBF24"/>
+    <rect x="14" y="195" width="80" height="10" rx="4" fill="#E5E7EB"/>
+    <rect x="14" y="211" width="55" height="10" rx="4" fill="#E5E7EB"/>
+  </g>
+
+  <!-- Phone 2: Booking (center, higher) -->
+  <g transform="translate(720, 80)">
+    <rect x="0" y="0" width="120" height="240" rx="16" fill="#FFFFFF"/>
+    <!-- Date selector row -->
+    <circle cx="20" cy="20" r="8" fill="#DBEAFE"/>
+    <circle cx="40" cy="20" r="8" fill="#DBEAFE"/>
+    <circle cx="60" cy="20" r="8" fill="#3B82F6"/>
+    <circle cx="80" cy="20" r="8" fill="#DBEAFE"/>
+    <circle cx="100" cy="20" r="8" fill="#DBEAFE"/>
+    <text x="60" y="24" font-family="-apple-system, sans-serif" font-size="8" fill="#FFFFFF" text-anchor="middle">15</text>
+    <!-- Time grid (6 rows x 8 cols) -->
+    <g transform="translate(10, 40)">
+      <!-- Row 1 -->
+      <rect x="0" y="0" width="11" height="22" rx="2" fill="#34D399"/><rect x="13" y="0" width="11" height="22" rx="2" fill="#34D399"/><rect x="26" y="0" width="11" height="22" rx="2" fill="#EF4444"/><rect x="39" y="0" width="11" height="22" rx="2" fill="#34D399"/><rect x="52" y="0" width="11" height="22" rx="2" fill="#3B82F6"/><rect x="65" y="0" width="11" height="22" rx="2" fill="#34D399"/><rect x="78" y="0" width="11" height="22" rx="2" fill="#FBBF24"/><rect x="91" y="0" width="11" height="22" rx="2" fill="#34D399"/>
+      <!-- Row 2 -->
+      <rect x="0" y="25" width="11" height="22" rx="2" fill="#3B82F6"/><rect x="13" y="25" width="11" height="22" rx="2" fill="#34D399"/><rect x="26" y="25" width="11" height="22" rx="2" fill="#34D399"/><rect x="39" y="25" width="11" height="22" rx="2" fill="#EF4444"/><rect x="52" y="25" width="11" height="22" rx="2" fill="#EF4444"/><rect x="65" y="25" width="11" height="22" rx="2" fill="#FBBF24"/><rect x="78" y="25" width="11" height="22" rx="2" fill="#34D399"/><rect x="91" y="25" width="11" height="22" rx="2" fill="#3B82F6"/>
+      <!-- Row 3 -->
+      <rect x="0" y="50" width="11" height="22" rx="2" fill="#34D399"/><rect x="13" y="50" width="11" height="22" rx="2" fill="#EF4444"/><rect x="26" y="50" width="11" height="22" rx="2" fill="#3B82F6"/><rect x="39" y="50" width="11" height="22" rx="2" fill="#34D399"/><rect x="52" y="50" width="11" height="22" rx="2" fill="#34D399"/><rect x="65" y="50" width="11" height="22" rx="2" fill="#34D399"/><rect x="78" y="50" width="11" height="22" rx="2" fill="#EF4444"/><rect x="91" y="50" width="11" height="22" rx="2" fill="#FBBF24"/>
+      <!-- Row 4 -->
+      <rect x="0" y="75" width="11" height="22" rx="2" fill="#FBBF24"/><rect x="13" y="75" width="11" height="22" rx="2" fill="#34D399"/><rect x="26" y="75" width="11" height="22" rx="2" fill="#34D399"/><rect x="39" y="75" width="11" height="22" rx="2" fill="#3B82F6"/><rect x="52" y="75" width="11" height="22" rx="2" fill="#34D399"/><rect x="65" y="75" width="11" height="22" rx="2" fill="#EF4444"/><rect x="78" y="75" width="11" height="22" rx="2" fill="#34D399"/><rect x="91" y="75" width="11" height="22" rx="2" fill="#34D399"/>
+      <!-- Row 5 -->
+      <rect x="0" y="100" width="11" height="22" rx="2" fill="#34D399"/><rect x="13" y="100" width="11" height="22" rx="2" fill="#3B82F6"/><rect x="26" y="100" width="11" height="22" rx="2" fill="#FBBF24"/><rect x="39" y="100" width="11" height="22" rx="2" fill="#34D399"/><rect x="52" y="100" width="11" height="22" rx="2" fill="#EF4444"/><rect x="65" y="100" width="11" height="22" rx="2" fill="#34D399"/><rect x="78" y="100" width="11" height="22" rx="2" fill="#3B82F6"/><rect x="91" y="100" width="11" height="22" rx="2" fill="#34D399"/>
+      <!-- Row 6 -->
+      <rect x="0" y="125" width="11" height="22" rx="2" fill="#EF4444"/><rect x="13" y="125" width="11" height="22" rx="2" fill="#34D399"/><rect x="26" y="125" width="11" height="22" rx="2" fill="#34D399"/><rect x="39" y="125" width="11" height="22" rx="2" fill="#FBBF24"/><rect x="52" y="125" width="11" height="22" rx="2" fill="#34D399"/><rect x="65" y="125" width="11" height="22" rx="2" fill="#3B82F6"/><rect x="78" y="125" width="11" height="22" rx="2" fill="#34D399"/><rect x="91" y="125" width="11" height="22" rx="2" fill="#EF4444"/>
+    </g>
+  </g>
+
+  <!-- Phone 3: Profile (right, slightly lower) -->
+  <g transform="translate(880, 120)">
+    <rect x="0" y="0" width="120" height="240" rx="16" fill="#FFFFFF"/>
+    <!-- Avatar -->
+    <circle cx="60" cy="45" r="22" fill="#DBEAFE"/>
+    <circle cx="60" cy="40" r="9" fill="#93C5FD"/>
+    <path d="M42 60 Q60 75 78 60" fill="#93C5FD"/>
+    <!-- Name placeholder -->
+    <rect x="35" y="76" width="50" height="8" rx="4" fill="#E5E7EB"/>
+    <!-- Wallet cards -->
+    <rect x="12" y="96" width="28" height="32" rx="6" fill="#FEF3C7"/>
+    <rect x="46" y="96" width="28" height="32" rx="6" fill="#DCFCE7"/>
+    <rect x="80" y="96" width="28" height="32" rx="6" fill="#EDE9FE"/>
+    <!-- Wallet icons -->
+    <text x="26" y="117" font-family="-apple-system, sans-serif" font-size="10" fill="#F59E0B" text-anchor="middle">$</text>
+    <text x="60" y="117" font-family="-apple-system, sans-serif" font-size="10" fill="#22C55E" text-anchor="middle">P</text>
+    <text x="94" y="117" font-family="-apple-system, sans-serif" font-size="10" fill="#8B5CF6" text-anchor="middle">C</text>
+    <!-- Menu lines -->
+    <rect x="14" y="142" width="92" height="10" rx="4" fill="#F3F4F6"/>
+    <rect x="14" y="158" width="92" height="10" rx="4" fill="#F3F4F6"/>
+    <rect x="14" y="174" width="92" height="10" rx="4" fill="#F3F4F6"/>
+    <rect x="14" y="190" width="92" height="10" rx="4" fill="#F3F4F6"/>
+    <rect x="14" y="206" width="92" height="10" rx="4" fill="#F3F4F6"/>
+    <!-- Menu item dots -->
+    <circle cx="22" cy="147" r="3" fill="#6366F1"/>
+    <circle cx="22" cy="163" r="3" fill="#22C55E"/>
+    <circle cx="22" cy="179" r="3" fill="#F59E0B"/>
+    <circle cx="22" cy="195" r="3" fill="#EC4899"/>
+    <circle cx="22" cy="211" r="3" fill="#8B5CF6"/>
+  </g>
+
+  <!-- Phone labels -->
+  <text x="620" y="380" font-family="-apple-system, PingFang SC, Microsoft YaHei, sans-serif" font-size="13" fill="rgba(255,255,255,0.7)" text-anchor="middle">首页</text>
+  <text x="780" y="350" font-family="-apple-system, PingFang SC, Microsoft YaHei, sans-serif" font-size="13" fill="rgba(255,255,255,0.7)" text-anchor="middle">预订</text>
+  <text x="940" y="390" font-family="-apple-system, PingFang SC, Microsoft YaHei, sans-serif" font-size="13" fill="rgba(255,255,255,0.7)" text-anchor="middle">个人中心</text>
+
+  <!-- Decorative dots -->
+  <circle cx="80" cy="420" r="3" fill="rgba(255,255,255,0.2)"/>
+  <circle cx="100" cy="430" r="2" fill="rgba(255,255,255,0.15)"/>
+  <circle cx="160" cy="440" r="4" fill="rgba(255,255,255,0.1)"/>
+  <circle cx="300" cy="410" r="2" fill="rgba(255,255,255,0.15)"/>
+  <circle cx="400" cy="450" r="3" fill="rgba(255,255,255,0.1)"/>
+</svg>
