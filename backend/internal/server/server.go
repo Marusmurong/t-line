@@ -14,6 +14,7 @@ import (
 	"github.com/t-line/backend/internal/config"
 	"github.com/t-line/backend/internal/integration/sms"
 	"github.com/t-line/backend/internal/integration/wechat"
+	academicmod "github.com/t-line/backend/internal/modules/academic"
 	activitymod "github.com/t-line/backend/internal/modules/activity"
 	authmod "github.com/t-line/backend/internal/modules/auth"
 	bookingmod "github.com/t-line/backend/internal/modules/booking"
@@ -47,6 +48,8 @@ type Server struct {
 	productHandler         *productmod.Handler
 	activityHandler        *activitymod.Handler
 	activityAdminHandler   *activitymod.AdminHandler
+	academicHandler        *academicmod.Handler
+	academicAdminHandler   *academicmod.AdminHandler
 	notifyHandler          *notifymod.Handler
 }
 

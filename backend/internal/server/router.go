@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	academicmod "github.com/t-line/backend/internal/modules/academic"
 	activitymod "github.com/t-line/backend/internal/modules/activity"
 	authmod "github.com/t-line/backend/internal/modules/auth"
 	bookingmod "github.com/t-line/backend/internal/modules/booking"
@@ -56,6 +57,8 @@ func (s *Server) setupRoutes() {
 	s.productHandler.RegisterRoutes(public, admin)
 	s.activityHandler.RegisterRoutes(public, authed)
 	s.activityAdminHandler.RegisterRoutes(admin)
+	s.academicHandler.RegisterRoutes(public, authed)
+	s.academicAdminHandler.RegisterRoutes(admin)
 	s.notifyHandler.RegisterRoutes(authed)
 
 	// handle 404
@@ -104,6 +107,12 @@ func (s *Server) initModules() {
 	activitySvc := activitymod.NewService(activityRepo)
 	s.activityHandler = activitymod.NewHandler(activitySvc)
 	s.activityAdminHandler = activitymod.NewAdminHandler(activitySvc)
+
+	// Academic module
+	academicRepo := academicmod.NewRepository(s.db)
+	academicSvc := academicmod.NewService(academicRepo)
+	s.academicHandler = academicmod.NewHandler(academicSvc)
+	s.academicAdminHandler = academicmod.NewAdminHandler(academicSvc)
 
 	// Notify module
 	notifyRepo := notifymod.NewRepository(s.db)
